@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section 3: Segmentation &amp; Detection</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    line-height: 1.75;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .hero {
+    text-align: center;
+    padding: 60px 30px 50px;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #0f3460 0%, #533483 50%, #e94560 100%);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,.02) 30px, rgba(255,255,255,.02) 60px);
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 800; color: #fff; position: relative; }
+  .hero .subtitle { font-size: 1.1rem; color: rgba(255,255,255,.8); margin-top: 10px; position: relative; }
+
+  /* ── Section Dividers ── */
+  .section-divider {
+    text-align: center;
+    margin: 50px 0 30px;
+    position: relative;
+  }
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e94560, transparent);
+  }
+  .section-divider span {
+    background: #1a1a2e;
+    padding: 0 30px;
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e94560;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: #16213e;
+    border-radius: 16px;
+    padding: 35px 35px 30px;
+    margin-bottom: 35px;
+    border: 1px solid rgba(233,69,96,.15);
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    transition: border-color .3s;
+  }
+  .card:hover { border-color: rgba(233,69,96,.45); }
+  .card-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #e94560, #533483);
+    color: #fff;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 38px;
+    font-weight: 700;
+    font-size: .95rem;
+    margin-bottom: 12px;
+  }
+  .card h2 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #e94560;
+    margin-bottom: 18px;
+  }
+  .card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #a8dadc;
+    margin: 22px 0 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(168,218,220,.15);
+  }
+  .card p, .card li { font-size: .95rem; color: #ccc; }
+  .card ul, .card ol { padding-left: 22px; margin-top: 6px; }
+  .card li { margin-bottom: 5px; }
+
+  /* ── Mask / Matrix Tables ── */
+  .mask-table {
+    border-collapse: collapse;
+    margin: 14px auto;
+    font-family: 'Inter', monospace;
+  }
+  .mask-table td {
+    border: 1px solid #3a506b;
+    width: 52px; height: 44px;
+    text-align: center;
+    font-weight: 600;
+    font-size: .95rem;
+    color: #f1faee;
+    background: #1a1a2e;
+  }
+  .mask-table td.highlight { background: #0f3460; color: #e94560; }
+
+  /* ── Formula / Code Blocks ── */
+  .formula {
+    background: #0d1b2a;
+    border-left: 4px solid #e94560;
+    padding: 14px 20px;
+    margin: 12px 0;
+    border-radius: 0 10px 10px 0;
+    font-family: 'Courier New', monospace;
+    font-size: .92rem;
+    color: #a8dadc;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+
+  /* ── Example Block ── */
+  .example {
+    background: #0d1b2a;
+    border: 1px solid #1b3a5c;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+  .example-title {
+    font-weight: 700;
+    color: #f1c40f;
+    margin-bottom: 10px;
+    font-size: .95rem;
+  }
+
+  /* ── Practice Question ── */
+  .practice {
+    background: linear-gradient(135deg, #1b2838, #1a2744);
+    border: 1px dashed #e94560;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+  .practice-title {
+    font-weight: 700;
+    color: #e94560;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  /* ── Steps ── */
+  .steps ol { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps li {
+    counter-increment: step;
+    padding-left: 36px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0; top: 2px;
+    width: 24px; height: 24px;
+    background: #e94560;
+    color: #fff;
+    border-radius: 50%;
+    font-size: .75rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 24px;
+  }
+
+  .grid-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .grid-row .mask-table { margin: 4px; }
+
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.7rem; }
+    .card { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <h1>Section 3: Segmentation &amp; Detection</h1>
+  <p class="subtitle">Thresholding &bull; Histogram Analysis &bull; Line, Corner, Point &amp; Edge Detection</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PART A – SEGMENTATION
+     ═══════════════════════════════════════════════════ -->
+<div class="section-divider"><span>Segmentation</span></div>
+
+<!-- ───── 1. Thresholding ───── -->
+<div class="card">
+  <div class="card-number">1</div>
+  <h2>Thresholding</h2>
+
+  <h3>📖 What It Does</h3>
+  <p>Thresholding converts a grayscale image into a binary image by comparing every pixel intensity to a chosen threshold <strong>T</strong>. Pixels above (or equal to) T become white (foreground), and those below become black (background).</p>
+  <div class="formula">g(x, y) = 255   if f(x, y) &ge; T
+g(x, y) = 0     if f(x, y) &lt; T</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">Given 4×4 image, T = 128</div>
+    <p>Input pixel values:</p>
+    <table class="mask-table">
+      <tr><td>100</td><td>150</td><td>200</td><td>50</td></tr>
+      <tr><td>130</td><td>80</td><td>255</td><td>120</td></tr>
+      <tr><td>10</td><td>140</td><td>90</td><td>180</td></tr>
+      <tr><td>200</td><td>60</td><td>128</td><td>75</td></tr>
+    </table>
+    <p style="margin-top:10px">Output (T = 128): each pixel → 255 if ≥ 128, else 0</p>
+    <table class="mask-table">
+      <tr><td>0</td><td>255</td><td>255</td><td>0</td></tr>
+      <tr><td>255</td><td>0</td><td>255</td><td>0</td></tr>
+      <tr><td>0</td><td>255</td><td>0</td><td>255</td></tr>
+      <tr><td>255</td><td>0</td><td>255</td><td>0</td></tr>
+    </table>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Load the image and convert to grayscale.</li>
+    <li>Choose a threshold T (manually, or via Otsu's method).</li>
+    <li>Scan every pixel: if intensity ≥ T → set 255; else → set 0.</li>
+    <li>The result is a binary image separating foreground from background.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Given the 3×3 image below with T = 100, compute the binary output.</p>
+    <table class="mask-table">
+      <tr><td>90</td><td>110</td><td>100</td></tr>
+      <tr><td>50</td><td>200</td><td>95</td></tr>
+      <tr><td>105</td><td>80</td><td>150</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ───── 2. Histogram Analysis ───── -->
+<div class="card">
+  <div class="card-number">2</div>
+  <h2>Histogram Analysis</h2>
+
+  <h3>📖 What It Does</h3>
+  <p>A histogram counts the frequency of each intensity level (0–255) in a grayscale image. It reveals the distribution of pixel intensities and helps choose thresholds for segmentation. A <strong>bimodal</strong> histogram (two peaks) suggests a natural threshold exists in the valley between the peaks.</p>
+  <div class="formula">h(k) = number of pixels with intensity k,   k = 0, 1, …, 255
+p(k) = h(k) / N    (normalized histogram, where N = total pixels)</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">3×3 image — build its histogram</div>
+    <table class="mask-table">
+      <tr><td>0</td><td>1</td><td>2</td></tr>
+      <tr><td>1</td><td>3</td><td>1</td></tr>
+      <tr><td>2</td><td>3</td><td>3</td></tr>
+    </table>
+    <p style="margin-top:10px">Histogram counts (only non-zero levels):</p>
+    <ul>
+      <li>h(0) = 1</li>
+      <li>h(1) = 3</li>
+      <li>h(2) = 2</li>
+      <li>h(3) = 3</li>
+    </ul>
+    <p>Total pixels N = 9. Normalized: p(0) = 1/9, p(1) = 3/9 = 1/3, p(2) = 2/9, p(3) = 3/9 = 1/3.</p>
+    <p>The valley between peaks at 1 and 3 is at intensity 2 → a good threshold would be T = 2.</p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Load the grayscale image.</li>
+    <li>Initialize an array of 256 zeros (bins for intensities 0–255).</li>
+    <li>Scan every pixel; increment bin[ pixel_value ].</li>
+    <li>Plot the histogram (intensity on x-axis, frequency on y-axis).</li>
+    <li>Identify peaks and valleys. Choose the valley as a segmentation threshold.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Build the histogram for the image below. Then suggest an optimal threshold by inspecting the valley between the two most prominent peaks.</p>
+    <table class="mask-table">
+      <tr><td>10</td><td>12</td><td>200</td><td>210</td></tr>
+      <tr><td>11</td><td>15</td><td>205</td><td>195</td></tr>
+      <tr><td>13</td><td>14</td><td>198</td><td>202</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ───── 3. Double Segmentation ───── -->
+<div class="card">
+  <div class="card-number">3</div>
+  <h2>Double Segmentation (Two-Threshold / Band Segmentation)</h2>
+
+  <h3>📖 What It Does</h3>
+  <p>Instead of a single threshold, <strong>two thresholds T<sub>low</sub> and T<sub>high</sub></strong> are used to isolate pixels whose intensities fall <em>between</em> the two thresholds. This creates three classes: background, region of interest, and another background/foreground region.</p>
+  <div class="formula">g(x, y) = 255   if T_low &le; f(x, y) &le; T_high
+g(x, y) = 0     otherwise</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">4×4 image, T<sub>low</sub> = 80, T<sub>high</sub> = 180</div>
+    <table class="mask-table">
+      <tr><td>50</td><td>100</td><td>200</td><td>90</td></tr>
+      <tr><td>150</td><td>30</td><td>180</td><td>85</td></tr>
+      <tr><td>190</td><td>120</td><td>75</td><td>160</td></tr>
+      <tr><td>60</td><td>140</td><td>210</td><td>80</td></tr>
+    </table>
+    <p style="margin-top:10px">Output (255 if 80 ≤ value ≤ 180, else 0):</p>
+    <table class="mask-table">
+      <tr><td>0</td><td>255</td><td>0</td><td>255</td></tr>
+      <tr><td>255</td><td>0</td><td>255</td><td>255</td></tr>
+      <tr><td>0</td><td>255</td><td>0</td><td>255</td></tr>
+      <tr><td>0</td><td>255</td><td>0</td><td>255</td></tr>
+    </table>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Load the grayscale image and analyze its histogram.</li>
+    <li>Identify two valleys (or pick T<sub>low</sub> and T<sub>high</sub> manually).</li>
+    <li>For each pixel: if T<sub>low</sub> ≤ intensity ≤ T<sub>high</sub> → 255, else → 0.</li>
+    <li>Output the binary mask highlighting only the band of interest.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Given the image below, apply double segmentation with T<sub>low</sub> = 100 and T<sub>high</sub> = 200. Write the output matrix.</p>
+    <table class="mask-table">
+      <tr><td>80</td><td>150</td><td>220</td></tr>
+      <tr><td>110</td><td>99</td><td>200</td></tr>
+      <tr><td>50</td><td>180</td><td>100</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PART B – DETECTION
+     ═══════════════════════════════════════════════════ -->
+<div class="section-divider"><span>Detection</span></div>
+
+<!-- ───── 4. Line Detection – Horizontal ───── -->
+<div class="card">
+  <div class="card-number">4</div>
+  <h2>Line Detection — Horizontal</h2>
+
+  <h3>📖 What It Does &amp; Mask</h3>
+  <p>Detects <strong>horizontal lines</strong> (edges running left-to-right) by convolving the image with a mask that responds maximally to a horizontal row of similar pixels bordered by different rows above and below.</p>
+  <table class="mask-table">
+    <tr><td>-1</td><td>-1</td><td>-1</td></tr>
+    <tr><td class="highlight">2</td><td class="highlight">2</td><td class="highlight">2</td></tr>
+    <tr><td>-1</td><td>-1</td><td>-1</td></tr>
+  </table>
+  <div class="formula">R = Σ (mask × neighborhood)
+If |R| > T → line detected at that pixel.</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">Apply mask to center pixel of this 3×3 patch</div>
+    <table class="mask-table">
+      <tr><td>10</td><td>10</td><td>10</td></tr>
+      <tr><td>200</td><td>200</td><td>200</td></tr>
+      <tr><td>10</td><td>10</td><td>10</td></tr>
+    </table>
+    <p style="margin-top:10px">
+      R = (-1)(10) + (-1)(10) + (-1)(10)<br>
+      &nbsp;&nbsp;+ (2)(200) + (2)(200) + (2)(200)<br>
+      &nbsp;&nbsp;+ (-1)(10) + (-1)(10) + (-1)(10)<br>
+      R = -30 + 1200 + (-30) = <strong>1140</strong> → strong horizontal line!
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Convert image to grayscale.</li>
+    <li>Pad the image borders (e.g., zero-padding).</li>
+    <li>Slide the 3×3 mask across every pixel; compute R = Σ(mask × neighborhood).</li>
+    <li>Take |R| and compare to threshold T.</li>
+    <li>Mark pixels where |R| > T as detected horizontal line pixels.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Compute the response R at the center pixel of the patch below using the horizontal line mask. Is a horizontal line present?</p>
+    <table class="mask-table">
+      <tr><td>50</td><td>50</td><td>50</td></tr>
+      <tr><td>50</td><td>50</td><td>50</td></tr>
+      <tr><td>50</td><td>50</td><td>50</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ───── 5. Line Detection – Vertical ───── -->
+<div class="card">
+  <div class="card-number">5</div>
+  <h2>Line Detection — Vertical</h2>
+
+  <h3>📖 What It Does &amp; Mask</h3>
+  <p>Detects <strong>vertical lines</strong> (edges running top-to-bottom). The mask has a positive column in the center and negative columns on either side.</p>
+  <table class="mask-table">
+    <tr><td>-1</td><td class="highlight">2</td><td>-1</td></tr>
+    <tr><td>-1</td><td class="highlight">2</td><td>-1</td></tr>
+    <tr><td>-1</td><td class="highlight">2</td><td>-1</td></tr>
+  </table>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">3×3 patch with a vertical stripe</div>
+    <table class="mask-table">
+      <tr><td>20</td><td>180</td><td>20</td></tr>
+      <tr><td>20</td><td>180</td><td>20</td></tr>
+      <tr><td>20</td><td>180</td><td>20</td></tr>
+    </table>
+    <p style="margin-top:10px">
+      R = (-1)(20) + (2)(180) + (-1)(20)<br>
+      &nbsp;&nbsp;+ (-1)(20) + (2)(180) + (-1)(20)<br>
+      &nbsp;&nbsp;+ (-1)(20) + (2)(180) + (-1)(20)<br>
+      R = 3 × [(-20) + 360 + (-20)] = 3 × 320 = <strong>960</strong> → strong vertical line!
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Convert image to grayscale.</li>
+    <li>Zero-pad the image borders.</li>
+    <li>Convolve with the vertical line mask across every pixel.</li>
+    <li>Take |R| and compare to threshold T.</li>
+    <li>Pixels exceeding T are detected vertical line pixels.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Compute R for the center pixel. Does it indicate a vertical line?</p>
+    <table class="mask-table">
+      <tr><td>100</td><td>100</td><td>100</td></tr>
+      <tr><td>10</td><td>100</td><td>10</td></tr>
+      <tr><td>100</td><td>100</td><td>100</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ───── 6. Line Detection – +45° ───── -->
+<div class="card">
+  <div class="card-number">6</div>
+  <h2>Line Detection — +45°</h2>
+
+  <h3>📖 What It Does &amp; Mask</h3>
+  <p>Detects lines oriented at <strong>+45 degrees</strong> (bottom-left to top-right diagonal). The positive weights lie along the anti-diagonal.</p>
+  <table class="mask-table">
+    <tr><td>-1</td><td>-1</td><td class="highlight">2</td></tr>
+    <tr><td>-1</td><td class="highlight">2</td><td>-1</td></tr>
+    <tr><td class="highlight">2</td><td>-1</td><td>-1</td></tr>
+  </table>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">3×3 patch with a +45° diagonal stripe</div>
+    <table class="mask-table">
+      <tr><td>10</td><td>10</td><td>200</td></tr>
+      <tr><td>10</td><td>200</td><td>10</td></tr>
+      <tr><td>200</td><td>10</td><td>10</td></tr>
+    </table>
+    <p style="margin-top:10px">
+      R = (-1)(10) + (-1)(10) + (2)(200)<br>
+      &nbsp;&nbsp;+ (-1)(10) + (2)(200) + (-1)(10)<br>
+      &nbsp;&nbsp;+ (2)(200) + (-1)(10) + (-1)(10)<br>
+      R = (-10 -10 +400) + (-10 +400 -10) + (400 -10 -10)<br>
+      R = 380 + 380 + 380 = <strong>1140</strong> → strong +45° line!
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Convert image to grayscale and pad borders.</li>
+    <li>Convolve with the +45° mask at every pixel location.</li>
+    <li>Compute |R| for each pixel.</li>
+    <li>Threshold the result to isolate strong +45° diagonal lines.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Compute R for the center pixel of this patch using the +45° mask:</p>
+    <table class="mask-table">
+      <tr><td>30</td><td>30</td><td>30</td></tr>
+      <tr><td>30</td><td>150</td><td>30</td></tr>
+      <tr><td>30</td><td>30</td><td>30</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ───── 7. Line Detection – −45° ───── -->
+<div class="card">
+  <div class="card-number">7</div>
+  <h2>Line Detection — −45°</h2>
+
+  <h3>📖 What It Does &amp; Mask</h3>
+  <p>Detects lines oriented at <strong>−45 degrees</strong> (top-left to bottom-right diagonal). The positive weights lie along the main diagonal.</p>
+  <table class="mask-table">
+    <tr><td class="highlight">2</td><td>-1</td><td>-1</td></tr>
+    <tr><td>-1</td><td class="highlight">2</td><td>-1</td></tr>
+    <tr><td>-1</td><td>-1</td><td class="highlight">2</td></tr>
+  </table>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">3×3 patch with a −45° diagonal stripe</div>
+    <table class="mask-table">
+      <tr><td>200</td><td>10</td><td>10</td></tr>
+      <tr><td>10</td><td>200</td><td>10</td></tr>
+      <tr><td>10</td><td>10</td><td>200</td></tr>
+    </table>
+    <p style="margin-top:10px">
+      R = (2)(200) + (-1)(10) + (-1)(10)<br>
+      &nbsp;&nbsp;+ (-1)(10) + (2)(200) + (-1)(10)<br>
+      &nbsp;&nbsp;+ (-1)(10) + (-1)(10) + (2)(200)<br>
+      R = (400 -10 -10) + (-10 +400 -10) + (-10 -10 +400)<br>
+      R = 380 + 380 + 380 = <strong>1140</strong> → strong −45° line!
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Convert image to grayscale and pad borders.</li>
+    <li>Convolve with the −45° mask at every pixel location.</li>
+    <li>Compute |R| and threshold to detect the diagonal lines.</li>
+    <li>Optionally combine with other line detectors for multi-direction analysis.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Given the patch below, compute R with the −45° mask. Is there a −45° line?</p>
+    <table class="mask-table">
+      <tr><td>255</td><td>0</td><td>0</td></tr>
+      <tr><td>0</td><td>255</td><td>0</td></tr>
+      <tr><td>0</td><td>0</td><td>255</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ───── 8. Corner Detection – Harris ───── -->
+<div class="card">
+  <div class="card-number">8</div>
+  <h2>Corner Detection — Harris</h2>
+
+  <h3>📖 What It Does</h3>
+  <p>The Harris corner detector finds points where the image intensity changes significantly in <strong>all directions</strong>. It uses the <em>structure tensor</em> (second-moment matrix) of image gradients.</p>
+  <div class="formula">Structure Tensor M = Σ w(x,y) [ I_x²    I_x·I_y ]
+                                    [ I_x·I_y  I_y²   ]
+
+Corner Response: R = det(M) − k · (trace(M))²
+  where det(M) = λ₁·λ₂,  trace(M) = λ₁ + λ₂,  k ≈ 0.04–0.06
+
+R &gt; 0 → Corner,   R ≈ 0 → Flat,   R &lt; 0 → Edge</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">Suppose at a pixel we have computed:</div>
+    <p>Σ I<sub>x</sub>² = 500, &nbsp; Σ I<sub>y</sub>² = 480, &nbsp; Σ I<sub>x</sub>I<sub>y</sub> = 10, &nbsp; k = 0.04</p>
+    <p style="margin-top:8px">
+      det(M) = (500)(480) − (10)² = 240000 − 100 = 239900<br>
+      trace(M) = 500 + 480 = 980<br>
+      R = 239900 − 0.04 × (980)² = 239900 − 0.04 × 960400 = 239900 − 38416 = <strong>201484</strong><br>
+      R ≫ 0 → <strong>Corner detected!</strong>
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Convert image to grayscale.</li>
+    <li>Compute image gradients I<sub>x</sub> and I<sub>y</sub> (using Sobel or similar).</li>
+    <li>Compute products I<sub>x</sub>², I<sub>y</sub>², and I<sub>x</sub>·I<sub>y</sub> for every pixel.</li>
+    <li>Apply a Gaussian window to sum these products in a local neighborhood → build M.</li>
+    <li>Compute R = det(M) − k·(trace(M))² for every pixel.</li>
+    <li>Threshold R: pixels with R above the threshold are corners.</li>
+    <li>Apply non-maximum suppression to keep only local maxima.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>At a pixel the gradient sums are: Σ I<sub>x</sub>² = 1000, Σ I<sub>y</sub>² = 950, Σ I<sub>x</sub>I<sub>y</sub> = 5, k = 0.05. Compute R and classify the point as corner, edge, or flat.</p>
+  </div>
+</div>
+
+<!-- ───── 9. Corner Detection – Shi-Tomasi ───── -->
+<div class="card">
+  <div class="card-number">9</div>
+  <h2>Corner Detection — Shi-Tomasi</h2>
+
+  <h3>📖 What It Does</h3>
+  <p>Shi-Tomasi is a modification of Harris that uses the <strong>minimum eigenvalue</strong> of the structure tensor M as the corner response. The intuition: a corner exists only if <em>both</em> eigenvalues are large. Using the minimum ensures we check the weaker direction.</p>
+  <div class="formula">R = min(λ₁, λ₂)
+
+Corner if R > T  (both eigenvalues must be large)</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">Given M at a pixel:</div>
+    <p>Σ I<sub>x</sub>² = 600, Σ I<sub>y</sub>² = 550, Σ I<sub>x</sub>I<sub>y</sub> = 20</p>
+    <p style="margin-top:8px">
+      Eigenvalues of M: solve det(M − λI) = 0<br>
+      λ² − (600+550)λ + (600·550 − 20²) = 0<br>
+      λ² − 1150λ + (330000 − 400) = 0<br>
+      λ² − 1150λ + 329600 = 0<br>
+      λ = (1150 ± √(1322500 − 1318400)) / 2 = (1150 ± √4100) / 2<br>
+      √4100 ≈ 64.03<br>
+      λ₁ ≈ 607.0, λ₂ ≈ 543.0<br>
+      R = min(607.0, 543.0) = <strong>543.0</strong><br>
+      If T = 100 → R > T → <strong>Corner detected!</strong>
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Compute gradients I<sub>x</sub> and I<sub>y</sub>.</li>
+    <li>Build the structure tensor M at each pixel (same as Harris).</li>
+    <li>Compute eigenvalues λ₁, λ₂ of M at each pixel.</li>
+    <li>Set R = min(λ₁, λ₂).</li>
+    <li>Threshold: if R > T → mark as corner.</li>
+    <li>Apply non-maximum suppression &amp; optional minimum distance between corners.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>If the eigenvalues at three pixels are (500, 10), (400, 380), and (5, 3), classify each as corner, edge, or flat region (use T = 50).</p>
+  </div>
+</div>
+
+<!-- ───── 10. Corner Detection – ORB ───── -->
+<div class="card">
+  <div class="card-number">10</div>
+  <h2>Corner Detection — ORB (Oriented FAST and Rotated BRIEF)</h2>
+
+  <h3>📖 What It Does</h3>
+  <p>ORB combines <strong>FAST</strong> keypoint detection with <strong>BRIEF</strong> descriptor computation. FAST detects corners by examining a circle of 16 pixels around a candidate point. If <em>N</em> contiguous pixels on the circle are all brighter (or all darker) than the center by a threshold <em>t</em>, the point is a corner. ORB adds <strong>orientation</strong> (using intensity centroid) and <strong>rotation-invariant BRIEF</strong> descriptors.</p>
+  <div class="formula">FAST test (for pixel p with intensity I_p, threshold t):
+  A pixel x on the circle is "brighter" if I_x > I_p + t
+  A pixel x on the circle is "darker"   if I_x < I_p − t
+  Corner if ≥ N (typically 9–12) contiguous pixels are all brighter or all darker.
+
+ORB adds:
+  • Orientation via intensity centroid: θ = atan2(m₀₁, m₁₀)
+  • Steered BRIEF descriptors for matching</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">FAST check with t = 20, N = 9, center pixel I<sub>p</sub> = 100</div>
+    <p>Circle pixels (16 values, simplified to first 12):</p>
+    <p>130, 135, 128, 140, 132, 125, 138, 131, 129, 80, 75, 90, …</p>
+    <p style="margin-top:8px">
+      Brighter threshold = 100 + 20 = 120<br>
+      Pixels above 120: 130✓, 135✓, 128✓, 140✓, 132✓, 125✓, 138✓, 131✓, 129✓ → <strong>9 contiguous brighter</strong><br>
+      9 ≥ N = 9 → <strong>Corner detected by FAST!</strong>
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Build an image pyramid (multi-scale) for scale invariance.</li>
+    <li>At each scale, apply FAST corner detection with threshold t.</li>
+    <li>Apply Harris score to rank FAST corners; keep top-K.</li>
+    <li>Compute orientation for each keypoint using intensity centroid.</li>
+    <li>Generate rotation-invariant BRIEF descriptors using the computed orientation.</li>
+    <li>Use descriptors for matching between images (Hamming distance).</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>A pixel has intensity 150. Using t = 25 and N = 12, the 16 circle pixels are: 180, 185, 178, 190, 182, 176, 188, 183, 179, 181, 177, 185, 100, 95, 110, 105. Is this pixel a FAST corner? Why or why not?</p>
+  </div>
+</div>
+
+<!-- ───── 11. Point Detection ───── -->
+<div class="card">
+  <div class="card-number">11</div>
+  <h2>Point Detection (Isolated Point Detection)</h2>
+
+  <h3>📖 What It Does &amp; Mask</h3>
+  <p>Detects <strong>isolated points</strong> — single pixels that are significantly different from all their neighbors. The mask is essentially a <em>Laplacian</em>: the center pixel gets a large positive weight (8), and all 8 neighbors get −1. The sum of the mask is zero, so uniform regions yield zero response.</p>
+  <table class="mask-table">
+    <tr><td>-1</td><td>-1</td><td>-1</td></tr>
+    <tr><td>-1</td><td class="highlight">8</td><td>-1</td></tr>
+    <tr><td>-1</td><td>-1</td><td>-1</td></tr>
+  </table>
+  <div class="formula">R = |Σ (mask × neighborhood)|
+If R > T → isolated point detected.</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">3×3 patch with an isolated bright point</div>
+    <table class="mask-table">
+      <tr><td>10</td><td>10</td><td>10</td></tr>
+      <tr><td>10</td><td>250</td><td>10</td></tr>
+      <tr><td>10</td><td>10</td><td>10</td></tr>
+    </table>
+    <p style="margin-top:10px">
+      R = (-1)(10)×8 + (8)(250)<br>
+      R = −80 + 2000 = <strong>1920</strong><br>
+      |R| = 1920 ≫ T → <strong>Isolated point detected!</strong>
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Convert image to grayscale and pad borders.</li>
+    <li>Slide the 3×3 point-detection mask over every pixel.</li>
+    <li>Compute R = Σ(mask × neighborhood) at each position.</li>
+    <li>Take |R| and compare to threshold T.</li>
+    <li>Pixels with |R| > T are marked as isolated points.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Apply the point detection mask to the center pixel of the patch below. Is it an isolated point? (use T = 100)</p>
+    <table class="mask-table">
+      <tr><td>50</td><td>50</td><td>50</td></tr>
+      <tr><td>50</td><td>55</td><td>50</td></tr>
+      <tr><td>50</td><td>50</td><td>50</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ───── 12. Edge Detection – Sobel ───── -->
+<div class="card">
+  <div class="card-number">12</div>
+  <h2>Edge Detection — Sobel Operator</h2>
+
+  <h3>📖 What It Does &amp; Masks</h3>
+  <p>The Sobel operator computes the <strong>gradient magnitude</strong> of the image using two 3×3 kernels: one for horizontal changes (G<sub>x</sub>) and one for vertical changes (G<sub>y</sub>). Edges are located where the gradient magnitude is large.</p>
+
+  <div class="grid-row">
+    <div style="text-align:center">
+      <p style="font-weight:600; color:#a8dadc; margin-bottom:6px;">G<sub>x</sub> (Horizontal Gradient)</p>
+      <table class="mask-table">
+        <tr><td>-1</td><td>0</td><td>1</td></tr>
+        <tr><td>-2</td><td>0</td><td>2</td></tr>
+        <tr><td>-1</td><td>0</td><td>1</td></tr>
+      </table>
+    </div>
+    <div style="text-align:center">
+      <p style="font-weight:600; color:#a8dadc; margin-bottom:6px;">G<sub>y</sub> (Vertical Gradient)</p>
+      <table class="mask-table">
+        <tr><td>-1</td><td>-2</td><td>-1</td></tr>
+        <tr><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>2</td><td>1</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="formula">G = √(G_x² + G_y²)       (gradient magnitude)
+θ = atan2(G_y, G_x)      (gradient direction)
+
+Approximate: G ≈ |G_x| + |G_y|</div>
+
+  <h3>🔢 Worked Numerical Example</h3>
+  <div class="example">
+    <div class="example-title">Apply Sobel to center pixel of this 3×3 patch</div>
+    <table class="mask-table">
+      <tr><td>100</td><td>100</td><td>200</td></tr>
+      <tr><td>100</td><td>100</td><td>200</td></tr>
+      <tr><td>100</td><td>100</td><td>200</td></tr>
+    </table>
+    <p style="margin-top:10px">
+      <strong>G<sub>x</sub>:</strong><br>
+      = (-1)(100) + (0)(100) + (1)(200)<br>
+      + (-2)(100) + (0)(100) + (2)(200)<br>
+      + (-1)(100) + (0)(100) + (1)(200)<br>
+      = (-100+200) + (-200+400) + (-100+200) = 100 + 200 + 100 = <strong>400</strong>
+    </p>
+    <p>
+      <strong>G<sub>y</sub>:</strong><br>
+      = (-1)(100) + (-2)(100) + (-1)(200)<br>
+      + (0)(100) + (0)(100) + (0)(200)<br>
+      + (1)(100) + (2)(100) + (1)(200)<br>
+      = (-100-200-200) + 0 + (100+200+200) = -500 + 500 = <strong>0</strong>
+    </p>
+    <p>
+      G = √(400² + 0²) = √160000 = <strong>400</strong><br>
+      θ = atan2(0, 400) = <strong>0°</strong> → vertical edge (gradient points horizontally)
+    </p>
+  </div>
+
+  <h3>🖼️ Step-by-Step on an Image</h3>
+  <div class="steps"><ol>
+    <li>Convert image to grayscale.</li>
+    <li>Optionally smooth with a Gaussian filter to reduce noise.</li>
+    <li>Convolve the image with the G<sub>x</sub> kernel → horizontal gradient.</li>
+    <li>Convolve the image with the G<sub>y</sub> kernel → vertical gradient.</li>
+    <li>Compute gradient magnitude G = √(G<sub>x</sub>² + G<sub>y</sub>²) at each pixel.</li>
+    <li>Optionally compute gradient direction θ = atan2(G<sub>y</sub>, G<sub>x</sub>).</li>
+    <li>Threshold G to obtain binary edge map.</li>
+  </ol></div>
+
+  <div class="practice">
+    <div class="practice-title">✏️ Practice Question</div>
+    <p>Compute G<sub>x</sub>, G<sub>y</sub>, the gradient magnitude G, and direction θ for the center pixel of:</p>
+    <table class="mask-table">
+      <tr><td>10</td><td>10</td><td>10</td></tr>
+      <tr><td>100</td><td>100</td><td>100</td></tr>
+      <tr><td>200</td><td>200</td><td>200</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center; padding: 40px 20px 30px; color: #555; font-size: .85rem;">
+  Section 3: Segmentation &amp; Detection — Image Processing Study Guide
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

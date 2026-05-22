@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section 1: Filters — Image Processing Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.7;
+    padding: 2rem 1rem 4rem;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 2px solid #0f3460;
+  }
+  .hero h1 {
+    font-size: 2.6rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #e94560, #0f3460, #53d8fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: .5rem;
+  }
+  .hero p { color: #8892b0; font-size: 1.05rem; }
+  .hero .badge {
+    display: inline-block;
+    margin-top: .8rem;
+    padding: .3rem 1rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+    background: rgba(233,69,96,.15);
+    color: #e94560;
+    border: 1px solid rgba(233,69,96,.3);
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: #16213e;
+    border-radius: 14px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid #0f3460;
+  }
+  .toc h2 { font-size: 1.15rem; color: #53d8fb; margin-bottom: 1rem; }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: .45rem .8rem;
+  }
+  .toc a {
+    color: #8892b0;
+    text-decoration: none;
+    font-size: .88rem;
+    transition: color .2s;
+  }
+  .toc a:hover { color: #e94560; }
+  .toc a .num { color: #e94560; font-weight: 600; margin-right: .3rem; }
+
+  /* ── Card ── */
+  .card {
+    background: #16213e;
+    border-radius: 14px;
+    padding: 2rem 2.2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #0f3460;
+    transition: border-color .3s;
+  }
+  .card:hover { border-color: #e94560; }
+  .card-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #e94560, #c2185b);
+    color: #fff;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 36px;
+    font-weight: 800;
+    font-size: .95rem;
+    margin-bottom: .8rem;
+  }
+  .card h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: .3rem;
+  }
+  .card .aka { color: #8892b0; font-size: .85rem; margin-bottom: 1.2rem; }
+
+  /* Sections inside card */
+  .section-label {
+    display: inline-block;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    padding: .2rem .7rem;
+    border-radius: 5px;
+    margin-bottom: .6rem;
+    margin-top: 1.4rem;
+  }
+  .label-desc  { background: rgba(83,216,251,.12); color: #53d8fb; }
+  .label-example { background: rgba(76,175,80,.12); color: #66bb6a; }
+  .label-apply { background: rgba(255,183,77,.12); color: #ffb74d; }
+  .label-question { background: rgba(233,69,96,.12); color: #e94560; }
+
+  .formula {
+    background: #0d1b36;
+    border-left: 3px solid #e94560;
+    padding: .8rem 1.2rem;
+    border-radius: 6px;
+    font-size: .93rem;
+    margin: .6rem 0;
+    overflow-x: auto;
+    color: #cfd8dc;
+  }
+
+  .grid-table {
+    border-collapse: collapse;
+    margin: .6rem auto;
+    font-size: .92rem;
+  }
+  .grid-table td {
+    border: 1px solid #0f3460;
+    width: 46px; height: 42px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .grid-table .highlight { background: rgba(233,69,96,.18); color: #e94560; }
+
+  .steps { padding-left: 1.3rem; }
+  .steps li { margin-bottom: .45rem; font-size: .93rem; }
+  .steps li::marker { color: #ffb74d; font-weight: 700; }
+
+  .question-box {
+    background: #0d1b36;
+    border-left: 3px solid #e94560;
+    padding: .9rem 1.2rem;
+    border-radius: 6px;
+    font-size: .93rem;
+    margin-top: .5rem;
+  }
+  .question-box .q-label { color: #e94560; font-weight: 700; margin-bottom: .3rem; }
+
+  .spoiler-btn {
+    display: inline-block;
+    margin-top: .6rem;
+    padding: .35rem .9rem;
+    font-size: .82rem;
+    font-weight: 600;
+    border: 1px solid #e94560;
+    background: transparent;
+    color: #e94560;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .spoiler-btn:hover { background: rgba(233,69,96,.15); }
+  .spoiler-answer {
+    display: none;
+    margin-top: .5rem;
+    padding: .7rem 1rem;
+    background: rgba(233,69,96,.07);
+    border-radius: 6px;
+    font-size: .9rem;
+    color: #cfd8dc;
+  }
+
+  .calc { color: #66bb6a; }
+  .note { color: #ffb74d; font-style: italic; font-size: .88rem; }
+  strong { color: #ffffff; }
+  code {
+    background: #0d1b36;
+    padding: .15rem .4rem;
+    border-radius: 4px;
+    font-size: .87rem;
+    color: #53d8fb;
+  }
+
+  @media (max-width: 640px) {
+    .card { padding: 1.3rem 1.1rem; }
+    .hero h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ════════════════  HERO  ════════════════ -->
+<div class="hero">
+  <h1>Section 1: Filters</h1>
+  <p>Image Processing Study Guide — Spatial Domain Filtering</p>
+  <span class="badge">16 Filters Covered</span>
+</div>
+
+<!-- ════════════════  TOC  ════════════════ -->
+<div class="toc">
+  <h2>📑 Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#f1"><span class="num">01</span> Mode Filter</a>
+    <a href="#f2"><span class="num">02</span> Median Filter</a>
+    <a href="#f3"><span class="num">03</span> Mid-point Filter</a>
+    <a href="#f4"><span class="num">04</span> Alpha-Trimmed Mean</a>
+    <a href="#f5"><span class="num">05</span> Mean / Average Filter</a>
+    <a href="#f6"><span class="num">06</span> Max Filter</a>
+    <a href="#f7"><span class="num">07</span> Min Filter</a>
+    <a href="#f8"><span class="num">08</span> Harmonic Mean</a>
+    <a href="#f9"><span class="num">09</span> Contra-Harmonic Mean</a>
+    <a href="#f10"><span class="num">10</span> Weighted Mean</a>
+    <a href="#f11"><span class="num">11</span> Gaussian Filter</a>
+    <a href="#f12"><span class="num">12</span> High Pass Filter</a>
+    <a href="#f13"><span class="num">13</span> Low Pass Filter</a>
+    <a href="#f14"><span class="num">14</span> Laplacian (Sharpening)</a>
+    <a href="#f15"><span class="num">15</span> Sobel Filter</a>
+    <a href="#f16"><span class="num">16</span> Prewitt Filter</a>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 1 — MODE FILTER                             ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f1">
+  <span class="card-number">1</span>
+  <h2>Mode Filter</h2>
+  <p class="aka">Non-linear order-statistics filter</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>The <strong>Mode Filter</strong> replaces the centre pixel with the <em>most frequently occurring</em> value in its neighbourhood. It is effective against <strong>salt-and-pepper noise</strong> while preserving edges better than mean-based filters. If multiple modes exist, common implementations pick the smallest mode or the centre value itself.</p>
+  <div class="formula">
+    output(x, y) = <strong>mode</strong>{ g(s, t) | (s, t) ∈ S<sub>xy</sub> }
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>12</td><td>15</td><td>15</td></tr>
+    <tr><td>20</td><td class="highlight">18</td><td>15</td></tr>
+    <tr><td>22</td><td>20</td><td>15</td></tr>
+  </table>
+  <p><strong>Neighbourhood values:</strong> {12, 15, 15, 20, 18, 15, 22, 20, 15}</p>
+  <p><strong>Frequency count:</strong> 15 appears <span class="calc">4 times</span> (most frequent).</p>
+  <p><strong>Result:</strong> Centre pixel → <span class="calc">15</span></p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose a kernel size (e.g., 3×3).</li>
+    <li>Pad the image borders (zero-pad or replicate).</li>
+    <li>Slide the kernel across every pixel.</li>
+    <li>Collect all pixel values inside the kernel window.</li>
+    <li>Compute the mode (most frequent value).</li>
+    <li>Replace the centre pixel with the mode.</li>
+    <li>Move to the next pixel and repeat until the entire image is processed.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Given the 3×3 neighbourhood: {5, 8, 5, 3, 5, 8, 8, 8, 3}, what is the output of the Mode filter?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> 8 appears 4 times, 5 appears 3 times, 3 appears 2 times. Mode = <strong>8</strong>.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 2 — MEDIAN FILTER                           ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f2">
+  <span class="card-number">2</span>
+  <h2>Median Filter</h2>
+  <p class="aka">Non-linear order-statistics filter</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>The <strong>Median Filter</strong> replaces the centre pixel with the <em>median</em> (middle value) of sorted neighbourhood values. It excels at removing <strong>salt-and-pepper noise</strong> while preserving edges far better than averaging filters.</p>
+  <div class="formula">
+    output(x, y) = <strong>median</strong>{ g(s, t) | (s, t) ∈ S<sub>xy</sub> }
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>10</td><td>20</td><td>15</td></tr>
+    <tr><td>25</td><td class="highlight">255</td><td>18</td></tr>
+    <tr><td>12</td><td>14</td><td>22</td></tr>
+  </table>
+  <p><strong>Sorted:</strong> {10, 12, 14, 15, <span class="calc">18</span>, 20, 22, 25, 255}</p>
+  <p>Middle value (5th of 9) = <span class="calc">18</span>. The noisy 255 is eliminated!</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose a kernel size (e.g., 3×3, 5×5 — always odd).</li>
+    <li>Pad the image borders appropriately.</li>
+    <li>For each pixel, extract the neighbourhood values.</li>
+    <li>Sort all values in ascending order.</li>
+    <li>Pick the middle value (position ⌈n/2⌉ for n values).</li>
+    <li>Replace the centre pixel with this median value.</li>
+    <li>Repeat for every pixel in the image.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>A 3×3 window yields these pixel values: {100, 2, 98, 5, 0, 97, 99, 3, 96}. What does the Median filter output? Is it effective here?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Sorted: {0, 2, 3, 5, <strong>96</strong>, 97, 98, 99, 100}. Median = <strong>96</strong>. Yes — the low-value impulses (0, 2, 3, 5) are ignored.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 3 — MID-POINT FILTER                        ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f3">
+  <span class="card-number">3</span>
+  <h2>Mid-point Filter</h2>
+  <p class="aka">Order-statistics filter</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>The <strong>Mid-point Filter</strong> computes the average of the <em>maximum</em> and <em>minimum</em> pixel values in the neighbourhood. It works best for <strong>uniformly distributed</strong> and <strong>Gaussian noise</strong>.</p>
+  <div class="formula">
+    output(x, y) = ½ × [ max(S<sub>xy</sub>) + min(S<sub>xy</sub>) ]
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>30</td><td>45</td><td>50</td></tr>
+    <tr><td>55</td><td class="highlight">40</td><td>60</td></tr>
+    <tr><td>35</td><td>70</td><td>25</td></tr>
+  </table>
+  <p><strong>Min = 25, Max = 70</strong></p>
+  <p>Mid-point = ½ × (70 + 25) = <span class="calc">47.5 ≈ 48</span></p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Define the kernel size (e.g., 3×3).</li>
+    <li>Pad the image borders.</li>
+    <li>For each pixel, gather neighbourhood values.</li>
+    <li>Find the maximum and minimum values.</li>
+    <li>Compute their average: (max + min) / 2.</li>
+    <li>Replace the centre pixel with this result.</li>
+    <li>Repeat across the entire image.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Neighbourhood values: {10, 50, 30, 80, 40, 20, 60, 90, 70}. What is the Mid-point filter output?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Min = 10, Max = 90. Mid-point = (10 + 90) / 2 = <strong>50</strong>.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 4 — ALPHA-TRIMMED MEAN FILTER               ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f4">
+  <span class="card-number">4</span>
+  <h2>Alpha-Trimmed Mean Filter</h2>
+  <p class="aka">Compromise between mean and median</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>Sort all <em>mn</em> values in the window, then delete the <em>d/2</em> lowest and <em>d/2</em> highest values (total <em>d</em> trimmed). Average the remaining <em>mn − d</em> values. When d = 0 it reduces to the arithmetic mean; when d = mn − 1 it becomes the median. Useful for <strong>mixed noise</strong> (e.g., Gaussian + salt-and-pepper).</p>
+  <div class="formula">
+    output(x, y) = 1 / (mn − d) × Σ g<sub>r</sub>(s, t)<br>
+    where g<sub>r</sub> are the remaining values after trimming d/2 from each end of the sorted list.
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3, d = 4)</span>
+  <table class="grid-table">
+    <tr><td>0</td><td>50</td><td>55</td></tr>
+    <tr><td>60</td><td class="highlight">52</td><td>58</td></tr>
+    <tr><td>255</td><td>48</td><td>53</td></tr>
+  </table>
+  <p><strong>Sorted:</strong> {0, 48, 50, 52, 53, 55, 58, 60, 255}</p>
+  <p>Trim d/2 = 2 from each end → remove {0, 48} and {60, 255}.</p>
+  <p>Remaining: {50, 52, 53, 55, 58} → Sum = 268</p>
+  <p>Average = 268 / 5 = <span class="calc">53.6 ≈ 54</span></p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose kernel size (mn) and trimming parameter d (even number, 0 ≤ d ≤ mn − 1).</li>
+    <li>Pad image borders.</li>
+    <li>For each pixel, extract and sort the neighbourhood values.</li>
+    <li>Remove the d/2 smallest and d/2 largest values.</li>
+    <li>Compute the arithmetic mean of the remaining (mn − d) values.</li>
+    <li>Replace the centre pixel.</li>
+    <li>Repeat for every pixel.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Sorted 3×3 window: {2, 10, 12, 14, 15, 16, 18, 20, 250}. With d = 2, what is the alpha-trimmed mean?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Remove 1 from each end: remove {2} and {250}. Remaining: {10, 12, 14, 15, 16, 18, 20}. Sum = 105. Mean = 105 / 7 = <strong>15</strong>.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 5 — MEAN / AVERAGE / BLUR FILTER             ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f5">
+  <span class="card-number">5</span>
+  <h2>Mean / Average / Blur Filter</h2>
+  <p class="aka">Box filter — linear smoothing</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>The simplest smoothing filter. Each pixel is replaced by the <em>arithmetic mean</em> of its neighbours. It reduces <strong>Gaussian noise</strong> effectively but blurs edges. The 3×3 kernel has all weights = 1/9.</p>
+  <div class="formula">
+    output(x, y) = (1 / mn) × Σ g(s, t)  for (s,t) ∈ S<sub>xy</sub><br><br>
+    Kernel (3×3): &nbsp; ¹⁄₉ × | 1  1  1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1  1  1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1  1  1 |
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>10</td><td>20</td><td>30</td></tr>
+    <tr><td>40</td><td class="highlight">50</td><td>60</td></tr>
+    <tr><td>70</td><td>80</td><td>90</td></tr>
+  </table>
+  <p>Sum = 10+20+30+40+50+60+70+80+90 = 450</p>
+  <p>Mean = 450 / 9 = <span class="calc">50</span></p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Create the averaging kernel (e.g., 3×3 of all 1/9).</li>
+    <li>Pad the image borders.</li>
+    <li>Convolve: slide the kernel over each pixel.</li>
+    <li>At each position, multiply corresponding values and sum → divide by mn.</li>
+    <li>Write the result to the output image.</li>
+    <li>Repeat for all pixels. Larger kernels → more blur.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Apply a 3×3 mean filter to the centre pixel of: {5, 10, 15, 20, 25, 30, 35, 40, 45}. What is the result?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Sum = 5+10+15+20+25+30+35+40+45 = 225. Mean = 225 / 9 = <strong>25</strong>.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 6 — MAX FILTER                              ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f6">
+  <span class="card-number">6</span>
+  <h2>Max Filter</h2>
+  <p class="aka">Order-statistics filter — dilation</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>Replaces the centre pixel with the <em>maximum</em> value in the neighbourhood. Useful for removing <strong>pepper noise</strong> (dark spots) and performing morphological dilation. It brightens the image.</p>
+  <div class="formula">
+    output(x, y) = max{ g(s, t) | (s, t) ∈ S<sub>xy</sub> }
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>100</td><td>110</td><td>105</td></tr>
+    <tr><td>0</td><td class="highlight">95</td><td>108</td></tr>
+    <tr><td>102</td><td>115</td><td>98</td></tr>
+  </table>
+  <p>Values: {100, 110, 105, 0, 95, 108, 102, 115, 98}</p>
+  <p>Max = <span class="calc">115</span>. The pepper noise (0) is ignored.</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Define the kernel size.</li>
+    <li>Pad image borders.</li>
+    <li>For each pixel, extract neighbourhood values.</li>
+    <li>Find the maximum value.</li>
+    <li>Replace the centre pixel with max.</li>
+    <li>Repeat for every pixel.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Neighbourhood: {45, 0, 60, 55, 0, 50, 48, 0, 52}. What does the Max filter return? What type of noise does it help with?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Max = <strong>60</strong>. The Max filter helps remove <strong>pepper noise</strong> (the dark 0-value pixels).</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 7 — MIN FILTER                              ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f7">
+  <span class="card-number">7</span>
+  <h2>Min Filter</h2>
+  <p class="aka">Order-statistics filter — erosion</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>Replaces the centre pixel with the <em>minimum</em> value in the neighbourhood. Useful for removing <strong>salt noise</strong> (bright spots) and performing morphological erosion. It darkens the image.</p>
+  <div class="formula">
+    output(x, y) = min{ g(s, t) | (s, t) ∈ S<sub>xy</sub> }
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>50</td><td>55</td><td>60</td></tr>
+    <tr><td>48</td><td class="highlight">255</td><td>52</td></tr>
+    <tr><td>58</td><td>53</td><td>57</td></tr>
+  </table>
+  <p>Values: {50, 55, 60, 48, 255, 52, 58, 53, 57}</p>
+  <p>Min = <span class="calc">48</span>. The salt noise (255) is eliminated.</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Define the kernel size.</li>
+    <li>Pad image borders.</li>
+    <li>For each pixel, extract neighbourhood values.</li>
+    <li>Find the minimum value.</li>
+    <li>Replace the centre pixel with min.</li>
+    <li>Repeat for every pixel.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Neighbourhood: {120, 255, 130, 125, 255, 128, 122, 255, 135}. What does the Min filter output? What noise does it address?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Min = <strong>120</strong>. It removes <strong>salt noise</strong> (the bright 255 pixels).</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 8 — HARMONIC MEAN FILTER                    ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f8">
+  <span class="card-number">8</span>
+  <h2>Harmonic Mean Filter</h2>
+  <p class="aka">Mean filter variant</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>Computes the <em>harmonic mean</em> of the neighbourhood. It works well for <strong>salt noise</strong> and <strong>Gaussian noise</strong> but <em>fails for pepper noise</em> (any zero value makes the output zero).</p>
+  <div class="formula">
+    output(x, y) = mn / Σ [ 1 / g(s,t) ] &nbsp;&nbsp; for (s,t) ∈ S<sub>xy</sub>
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>10</td><td>20</td><td>30</td></tr>
+    <tr><td>40</td><td class="highlight">50</td><td>60</td></tr>
+    <tr><td>20</td><td>30</td><td>40</td></tr>
+  </table>
+  <p>Σ(1/g) = 1/10 + 1/20 + 1/30 + 1/40 + 1/50 + 1/60 + 1/20 + 1/30 + 1/40</p>
+  <p>= 0.1 + 0.05 + 0.0333 + 0.025 + 0.02 + 0.0167 + 0.05 + 0.0333 + 0.025 = <span class="calc">0.3533</span></p>
+  <p>Harmonic mean = 9 / 0.3533 = <span class="calc">25.47 ≈ 25</span></p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose kernel size and pad borders.</li>
+    <li>For each pixel, extract neighbourhood values.</li>
+    <li>Compute the reciprocal (1/value) of each pixel.</li>
+    <li>Sum all reciprocals.</li>
+    <li>Divide mn (number of pixels) by that sum.</li>
+    <li>Replace the centre pixel with the result.</li>
+    <li>Repeat. <em class="note">Warning: fails if any pixel = 0.</em></li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>A 3×3 window has values: {5, 10, 20, 10, 5, 20, 10, 20, 5}. Compute the harmonic mean. Why can't this filter handle pepper noise?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Σ(1/g) = 3×(1/5) + 3×(1/10) + 3×(1/20) = 0.6 + 0.3 + 0.15 = 1.05. HM = 9/1.05 ≈ <strong>8.57</strong>. It fails on pepper noise because if any pixel = 0, 1/0 is undefined (infinity), making the output 0.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 9 — CONTRA-HARMONIC MEAN FILTER             ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f9">
+  <span class="card-number">9</span>
+  <h2>Contra-Harmonic Mean Filter</h2>
+  <p class="aka">Order-controlled mean filter</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>A powerful filter controlled by parameter <strong>Q</strong> (order). Positive Q eliminates <strong>pepper noise</strong>; negative Q eliminates <strong>salt noise</strong>. At Q = 0 it becomes the arithmetic mean; at Q = −1 it becomes the harmonic mean.</p>
+  <div class="formula">
+    output(x, y) = Σ g(s,t)<sup>Q+1</sup> / Σ g(s,t)<sup>Q</sup> &nbsp;&nbsp; for (s,t) ∈ S<sub>xy</sub>
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3, Q = 1)</span>
+  <table class="grid-table">
+    <tr><td>2</td><td>3</td><td>4</td></tr>
+    <tr><td>3</td><td class="highlight">0</td><td>4</td></tr>
+    <tr><td>5</td><td>3</td><td>2</td></tr>
+  </table>
+  <p><strong>Numerator</strong> Σ g<sup>Q+1</sup> = Σ g² = 4+9+16+9+0+16+25+9+4 = <span class="calc">92</span></p>
+  <p><strong>Denominator</strong> Σ g<sup>Q</sup> = Σ g¹ = 2+3+4+3+0+4+5+3+2 = <span class="calc">26</span></p>
+  <p>Result = 92 / 26 = <span class="calc">3.54 ≈ 4</span> (pepper noise 0 is suppressed)</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose kernel size and the order Q.</li>
+    <li>Pad image borders.</li>
+    <li>For each pixel, extract neighbourhood values.</li>
+    <li>Compute Σ g<sup>Q+1</sup> (numerator).</li>
+    <li>Compute Σ g<sup>Q</sup> (denominator).</li>
+    <li>Divide numerator / denominator → output pixel.</li>
+    <li>Repeat. Use Q &gt; 0 for pepper noise, Q &lt; 0 for salt noise.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>3×3 window: {10, 10, 10, 10, 10, 10, 10, 10, 10} with Q = 2. What is the result? What happens when all values are identical?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Numerator = 9 × 10³ = 9000. Denominator = 9 × 10² = 900. Result = 9000/900 = <strong>10</strong>. When all values are identical, the filter always returns that value regardless of Q.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 10 — WEIGHTED MEAN FILTER                   ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f10">
+  <span class="card-number">10</span>
+  <h2>Weighted Mean Filter</h2>
+  <p class="aka">Weighted averaging — linear smoothing</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>Like the mean filter, but each neighbour is given a different <strong>weight</strong>. The centre pixel usually receives the highest weight, giving it more influence. This provides smoother results than the box filter while still reducing noise.</p>
+  <div class="formula">
+    output(x, y) = Σ w(s,t) · g(s,t) / Σ w(s,t)<br><br>
+    Common 3×3 kernel: &nbsp; ¹⁄₁₆ × | 1  2  1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 2  4  2 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1  2  1 |
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>10</td><td>20</td><td>30</td></tr>
+    <tr><td>40</td><td class="highlight">50</td><td>60</td></tr>
+    <tr><td>70</td><td>80</td><td>90</td></tr>
+  </table>
+  <p><strong>Weights:</strong> 1,2,1,2,4,2,1,2,1 (sum = 16)</p>
+  <p>Weighted sum = 1×10 + 2×20 + 1×30 + 2×40 + 4×50 + 2×60 + 1×70 + 2×80 + 1×90</p>
+  <p>= 10 + 40 + 30 + 80 + 200 + 120 + 70 + 160 + 90 = <span class="calc">800</span></p>
+  <p>Result = 800 / 16 = <span class="calc">50</span></p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Define the weight kernel (e.g., the 1-2-1 / 2-4-2 / 1-2-1 kernel).</li>
+    <li>Pad the image borders.</li>
+    <li>For each pixel, multiply each neighbour by its corresponding weight.</li>
+    <li>Sum all weighted values.</li>
+    <li>Divide by the sum of weights (normalisation).</li>
+    <li>Replace the centre pixel with the result.</li>
+    <li>Repeat for the entire image.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Using weights [1,2,1; 2,4,2; 1,2,1] and pixel values [100,100,100; 100,200,100; 100,100,100], compute the weighted mean. Why is this better than a simple average?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Weighted sum = 8×(1 or 2)×100 + 4×200 = (1+2+1+2+2+1+2+1)×100 + 4×200 = 1200+800 = 2000. Wait — let's recalculate: 1×100+2×100+1×100+2×100+4×200+2×100+1×100+2×100+1×100 = 100+200+100+200+800+200+100+200+100 = 2000. Sum of weights = 16. Result = 2000/16 = <strong>125</strong>. It is better because the centre pixel (200) has more influence, preserving local detail better than a plain average which would give (8×100+200)/9 ≈ 111.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 11 — GAUSSIAN FILTER                        ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f11">
+  <span class="card-number">11</span>
+  <h2>Gaussian Filter</h2>
+  <p class="aka">Gaussian smoothing / blur</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>A weighted smoothing filter whose weights follow a <strong>2D Gaussian distribution</strong>. Provides better smoothing than box filters with less ringing. Controlled by σ (standard deviation) — larger σ = more blur.</p>
+  <div class="formula">
+    G(x, y) = (1 / 2πσ²) × e<sup>−(x²+y²) / 2σ²</sup><br><br>
+    Approx. 3×3 kernel (σ ≈ 0.85): &nbsp; ¹⁄₁₆ × | 1  2  1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 2  4  2 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1  2  1 |
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>20</td><td>25</td><td>30</td></tr>
+    <tr><td>35</td><td class="highlight">40</td><td>45</td></tr>
+    <tr><td>50</td><td>55</td><td>60</td></tr>
+  </table>
+  <p>Using kernel ¹⁄₁₆ × [1,2,1; 2,4,2; 1,2,1]:</p>
+  <p>Sum = 1×20 + 2×25 + 1×30 + 2×35 + 4×40 + 2×45 + 1×50 + 2×55 + 1×60</p>
+  <p>= 20+50+30+70+160+90+50+110+60 = <span class="calc">640</span></p>
+  <p>Result = 640 / 16 = <span class="calc">40</span></p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose σ and compute the Gaussian kernel (or use a standard approximation).</li>
+    <li>Normalise kernel values so they sum to 1.</li>
+    <li>Pad image borders.</li>
+    <li>Convolve: for each pixel, multiply neighbours by kernel weights, sum, and write result.</li>
+    <li>Optionally separate into two 1D passes (row then column) for efficiency — Gaussian is separable.</li>
+    <li>Repeat for all pixels.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Why is the Gaussian filter called "separable," and how does this property speed up computation for large kernels?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> A 2D Gaussian can be decomposed into the product of two 1D Gaussians: G(x,y) = G(x) × G(y). Instead of n² multiplications per pixel (for an n×n kernel), you only need 2n multiplications (one horizontal pass + one vertical pass). For a 7×7 kernel, this means 14 ops instead of 49 — a <strong>3.5× speedup</strong>.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 12 — HIGH PASS FILTER                       ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f12">
+  <span class="card-number">12</span>
+  <h2>High Pass Filter</h2>
+  <p class="aka">Sharpening / edge detection — spatial domain</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>A <strong>High Pass Filter</strong> allows high-frequency components (edges, details) to pass while attenuating low-frequency (smooth) areas. It is the complement of a low-pass filter: <code>HPF = Original − LPF</code>. The kernel sums to <strong>0</strong> (or near 0).</p>
+  <div class="formula">
+    Basic 3×3 HPF kernel: &nbsp; | -1  -1  -1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  &nbsp;8  -1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  -1  -1 |<br>
+    (Sum of all weights = 0)
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>50</td><td>50</td><td>50</td></tr>
+    <tr><td>50</td><td class="highlight">200</td><td>50</td></tr>
+    <tr><td>50</td><td>50</td><td>50</td></tr>
+  </table>
+  <p>Result = (−1)×50×8 + 8×200 = −400 + 1600 = <span class="calc">1200</span></p>
+  <p>Clamped to [0, 255] → <span class="calc">255</span></p>
+  <p class="note">The bright centre pixel stands out — the filter detects it as an edge/detail.</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Define the HPF kernel (weights sum to 0).</li>
+    <li>Pad the image borders.</li>
+    <li>Convolve the kernel with the image.</li>
+    <li>Results may be negative — clamp or rescale to [0, 255].</li>
+    <li>The output highlights edges and fine details.</li>
+    <li>Optionally add back to the original for sharpening: <code>sharp = original + k × HPF_result</code>.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Apply the HPF kernel [-1,-1,-1; -1,8,-1; -1,-1,-1] to a region where all pixels = 100. What is the output? What does this tell you?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> Output = (-1)×100×8 + 8×100 = -800+800 = <strong>0</strong>. In a flat (uniform) region, the HPF gives 0 — it only responds to changes (edges), confirming it filters out low frequencies.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 13 — LOW PASS FILTER                        ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f13">
+  <span class="card-number">13</span>
+  <h2>Low Pass Filter</h2>
+  <p class="aka">Smoothing filter</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>A <strong>Low Pass Filter</strong> allows low-frequency components (smooth regions) to pass while attenuating high-frequency components (edges, noise). The simplest LPF is the <strong>box/mean filter</strong>. All kernel values are positive and sum to 1.</p>
+  <div class="formula">
+    3×3 LPF (box): &nbsp; ¹⁄₉ × | 1  1  1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1  1  1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1  1  1 |<br>
+    (Sum of all weights = 1, all non-negative)
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>10</td><td>200</td><td>15</td></tr>
+    <tr><td>12</td><td class="highlight">180</td><td>18</td></tr>
+    <tr><td>14</td><td>190</td><td>20</td></tr>
+  </table>
+  <p>Sum = 10+200+15+12+180+18+14+190+20 = 659</p>
+  <p>Mean = 659 / 9 = <span class="calc">73.2 ≈ 73</span></p>
+  <p class="note">The sharp edges (10 vs 200) are smoothed out.</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose an LPF kernel (box, Gaussian, or custom — all positive, summing to 1).</li>
+    <li>Pad the image borders.</li>
+    <li>Convolve the kernel with each pixel neighbourhood.</li>
+    <li>Write the result to the output image.</li>
+    <li>Larger kernels produce more smoothing (more blur).</li>
+    <li>Can also be done in the frequency domain: multiply by a low-pass transfer function.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>What is the relationship between LPF and HPF? If you have the original image I and the LPF result L, how do you get the HPF result?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> <strong>HPF = I − LPF</strong>. The high-pass result is the original image minus the low-pass (smoothed) version. This is because LPF keeps the smooth parts, so subtracting it leaves only the edges/details.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 14 — LAPLACIAN (SHARPENING)                 ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f14">
+  <span class="card-number">14</span>
+  <h2>Laplacian Filter (Sharpening)</h2>
+  <p class="aka">2nd-order derivative filter</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>The <strong>Laplacian</strong> is a 2nd-order derivative operator that detects regions of rapid intensity change. It is <em>isotropic</em> (rotation-invariant). Since it highlights edges in all directions, it is used for <strong>sharpening</strong>: <code>sharpened = original − Laplacian</code> (when centre is negative) or <code>original + Laplacian</code> (when centre is positive).</p>
+  <div class="formula">
+    ∇²f = ∂²f/∂x² + ∂²f/∂y²<br><br>
+    Kernel (4-connected): &nbsp; | &nbsp;0  -1  &nbsp;0 |&nbsp;&nbsp;&nbsp;&nbsp; Kernel (8-connected): &nbsp; | -1  -1  -1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  &nbsp;4  -1 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  &nbsp;8  -1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;0  -1  &nbsp;0 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  -1  -1 |
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3, 4-connected kernel)</span>
+  <table class="grid-table">
+    <tr><td>10</td><td>10</td><td>10</td></tr>
+    <tr><td>10</td><td class="highlight">80</td><td>10</td></tr>
+    <tr><td>10</td><td>10</td><td>10</td></tr>
+  </table>
+  <p>Laplacian = 0×10 + (−1)×10 + 0×10 + (−1)×10 + 4×80 + (−1)×10 + 0×10 + (−1)×10 + 0×10</p>
+  <p>= 0 − 10 + 0 − 10 + 320 − 10 + 0 − 10 + 0 = <span class="calc">280</span></p>
+  <p><strong>Sharpened</strong> = 80 − (−1)×… Actually with positive centre: sharp = original + Laplacian output isn't used directly. Instead:</p>
+  <p>Since the centre coefficient is positive (+4), sharpened = original + Laplacian: not needed here. The Laplacian output 280 indicates a strong edge at the centre pixel.</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Choose the Laplacian kernel (4-connected or 8-connected).</li>
+    <li>Pad image borders.</li>
+    <li>Convolve the kernel with the image to get the Laplacian result L.</li>
+    <li>For sharpening: if the centre coefficient is <strong>positive</strong>, compute <code>sharp = original + L</code>; if <strong>negative</strong>, compute <code>sharp = original − L</code>.</li>
+    <li>Clamp results to [0, 255].</li>
+    <li>The Laplacian alone gives edges; combined with the original gives a sharpened image.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Apply the 4-connected Laplacian [0,-1,0; -1,4,-1; 0,-1,0] to a flat region where all pixels = 50. What is the Laplacian output? What does this mean?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> L = 0×50 + (-1)×50 + 0×50 + (-1)×50 + 4×50 + (-1)×50 + 0×50 + (-1)×50 + 0×50 = -50-50+200-50-50 = <strong>0</strong>. In a flat region the Laplacian is zero — it only responds to intensity changes, confirming it's a derivative operator.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 15 — SOBEL FILTER                           ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f15">
+  <span class="card-number">15</span>
+  <h2>Sobel Filter</h2>
+  <p class="aka">1st-order derivative — edge detection</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>The <strong>Sobel operator</strong> computes the <em>gradient magnitude</em> using two 3×3 kernels — one for horizontal edges (G<sub>x</sub>) and one for vertical edges (G<sub>y</sub>). It adds a smoothing component (weighted centre row/column) making it less sensitive to noise than Prewitt.</p>
+  <div class="formula">
+    G<sub>x</sub> = | -1  0  +1 | &nbsp;&nbsp;&nbsp; G<sub>y</sub> = | -1  -2  -1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -2  0  +2 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;0  &nbsp;0  &nbsp;0 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  0  +1 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| +1  +2  +1 |<br><br>
+    |G| = √(G<sub>x</sub>² + G<sub>y</sub>²) &nbsp;&nbsp; or approximated as &nbsp; |G| ≈ |G<sub>x</sub>| + |G<sub>y</sub>|
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>100</td><td>100</td><td>100</td></tr>
+    <tr><td>100</td><td class="highlight">100</td><td>200</td></tr>
+    <tr><td>100</td><td>100</td><td>200</td></tr>
+  </table>
+  <p><strong>G<sub>x</sub></strong> = (−1×100)+(0×100)+(1×100) + (−2×100)+(0×100)+(2×200) + (−1×100)+(0×100)+(1×200)</p>
+  <p>= (−100+0+100) + (−200+0+400) + (−100+0+200) = 0 + 200 + 100 = <span class="calc">300</span></p>
+  <p><strong>G<sub>y</sub></strong> = (−1×100)+(−2×100)+(−1×100) + (0×100)+(0×100)+(0×200) + (1×100)+(2×100)+(1×200)</p>
+  <p>= (−100−200−100) + (0+0+0) + (100+200+200) = −400 + 0 + 500 = <span class="calc">100</span></p>
+  <p><strong>|G|</strong> = √(300² + 100²) = √(90000 + 10000) = √100000 ≈ <span class="calc">316</span> → clamped to 255</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Pad the image borders.</li>
+    <li>Convolve the image with G<sub>x</sub> to get horizontal gradient.</li>
+    <li>Convolve the image with G<sub>y</sub> to get vertical gradient.</li>
+    <li>Compute gradient magnitude: |G| = √(G<sub>x</sub>² + G<sub>y</sub>²) per pixel.</li>
+    <li>Optionally compute gradient direction: θ = arctan(G<sub>y</sub>/G<sub>x</sub>).</li>
+    <li>Clamp to [0, 255] or threshold to create a binary edge map.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>Apply Sobel G<sub>x</sub> to a uniform patch where all 9 pixels = 50. What is G<sub>x</sub>? Why does this make sense?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> G<sub>x</sub> = (-1-2-1)×50 + (0+0+0)×50 + (1+2+1)×50 = -200 + 0 + 200 = <strong>0</strong>. There is no horizontal gradient (no edge) in a uniform patch, so the derivative is zero. This is expected — Sobel only responds to intensity changes.</div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║  FILTER 16 — PREWITT FILTER                         ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div class="card" id="f16">
+  <span class="card-number">16</span>
+  <h2>Prewitt Filter</h2>
+  <p class="aka">1st-order derivative — edge detection</p>
+
+  <span class="section-label label-desc">Description &amp; Formula</span>
+  <p>The <strong>Prewitt operator</strong> is similar to Sobel but uses <em>equal weights</em> (no emphasis on the centre row/column). It computes the gradient using two 3×3 kernels. It is slightly more sensitive to noise than Sobel but computationally simpler.</p>
+  <div class="formula">
+    G<sub>x</sub> = | -1  0  +1 | &nbsp;&nbsp;&nbsp; G<sub>y</sub> = | -1  -1  -1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  0  +1 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;0  &nbsp;0  &nbsp;0 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  0  +1 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| +1  +1  +1 |<br><br>
+    |G| = √(G<sub>x</sub>² + G<sub>y</sub>²)
+  </div>
+
+  <span class="section-label label-example">Worked Example (3 × 3)</span>
+  <table class="grid-table">
+    <tr><td>50</td><td>50</td><td>150</td></tr>
+    <tr><td>50</td><td class="highlight">50</td><td>150</td></tr>
+    <tr><td>50</td><td>50</td><td>150</td></tr>
+  </table>
+  <p><strong>G<sub>x</sub></strong> = (−1×50)+(0×50)+(1×150) + (−1×50)+(0×50)+(1×150) + (−1×50)+(0×50)+(1×150)</p>
+  <p>= 100 + 100 + 100 = <span class="calc">300</span></p>
+  <p><strong>G<sub>y</sub></strong> = (−1×50)+(−1×50)+(−1×150) + 0+0+0 + (1×50)+(1×50)+(1×150)</p>
+  <p>= (−50−50−150) + 0 + (50+50+150) = −250 + 250 = <span class="calc">0</span></p>
+  <p><strong>|G|</strong> = √(300² + 0²) = <span class="calc">300</span> → clamped to 255</p>
+  <p class="note">Strong vertical edge detected (G<sub>x</sub> is high), no horizontal edge (G<sub>y</sub> = 0).</p>
+
+  <span class="section-label label-apply">How to Apply on an Image</span>
+  <ol class="steps">
+    <li>Pad the image borders.</li>
+    <li>Convolve with the Prewitt G<sub>x</sub> kernel for horizontal edges.</li>
+    <li>Convolve with the Prewitt G<sub>y</sub> kernel for vertical edges.</li>
+    <li>Combine: |G| = √(G<sub>x</sub>² + G<sub>y</sub>²), or use |G<sub>x</sub>| + |G<sub>y</sub>|.</li>
+    <li>Clamp to [0, 255].</li>
+    <li>Optionally threshold to create a binary edge image.</li>
+  </ol>
+
+  <span class="section-label label-question">Practice Question</span>
+  <div class="question-box">
+    <p class="q-label">Q:</p>
+    <p>What is the key difference between Sobel and Prewitt kernels? When would you prefer Sobel over Prewitt?</p>
+    <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
+    <div class="spoiler-answer"><strong>Answer:</strong> The <strong>Sobel</strong> kernel uses weights [1, <strong>2</strong>, 1] giving more weight to the centre row/column, which provides a small amount of smoothing. <strong>Prewitt</strong> uses equal weights [1, 1, 1]. Prefer <strong>Sobel</strong> when the image has noise, because the extra smoothing reduces noise sensitivity while still detecting edges accurately.</div>
+  </div>
+</div>
+
+<!-- ════════════════  FOOTER  ════════════════ -->
+<div style="text-align:center; padding:2rem 0 1rem; color:#8892b0; font-size:.82rem; border-top:1px solid #0f3460; margin-top:1rem;">
+  Image Processing Study Guide — Section 1: Filters &nbsp;|&nbsp; 16 of 16 Filters Covered<br>
+  <span style="color:#e94560;">♥</span> Good luck with your studies!
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

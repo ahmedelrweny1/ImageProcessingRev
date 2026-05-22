@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP Concepts — Complete Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.hero{width:100%;padding:80px 20px 60px;text-align:center;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 50%);animation:pulse 8s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.hero h1{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#818cf8,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+.hero p{font-size:1.15rem;color:#94a3b8;max-width:600px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;padding:50px 40px;max-width:1200px;width:100%}
+.card{background:linear-gradient(145deg,#16213e,#1a1a2e);border:1px solid rgba(99,102,241,0.15);border-radius:16px;padding:36px 30px;transition:all .3s ease;position:relative;overflow:hidden;text-decoration:none;color:inherit;display:block}
+.card:hover{transform:translateY(-6px);border-color:rgba(99,102,241,0.5);box-shadow:0 20px 60px rgba(99,102,241,0.15)}
+.card::after{content:'→';position:absolute;top:36px;right:30px;font-size:1.5rem;color:#6366f1;transition:transform .3s}
+.card:hover::after{transform:translateX(6px)}
+.card-number{font-size:.85rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+.card h2{font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px}
+.card p{color:#94a3b8;line-height:1.6;font-size:.95rem}
+.card .topics{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.card .tag{background:rgba(99,102,241,0.12);color:#818cf8;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600}
+.footer{padding:40px 20px;text-align:center;color:#475569;font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>📚 IP Concepts</h1>
+<p>Complete Image Processing Study Guide — Descriptions, Examples, Step-by-Step Applications & Practice Questions</p>
+</div>
+<div class="grid">
+<a href="section1_filters.html" class="card">
+<div class="card-number">Section 1</div>
+<h2>Filters</h2>
+<p>16 spatial and frequency filters with formulas, worked examples, and convolution step-by-step.</p>
+<div class="topics">
+<span class="tag">Mode</span><span class="tag">Median</span><span class="tag">Midpoint</span><span class="tag">Alpha-Trimmed</span><span class="tag">Mean</span><span class="tag">Max</span><span class="tag">Min</span><span class="tag">Harmonic</span><span class="tag">Contra-Harmonic</span><span class="tag">Weighted</span><span class="tag">Gaussian</span><span class="tag">High Pass</span><span class="tag">Low Pass</span><span class="tag">Laplacian</span><span class="tag">Sobel</span><span class="tag">Prewitt</span>
+</div>
+</a>
+<a href="section2_compression_padding.html" class="card">
+<div class="card-number">Section 2</div>
+<h2>Compression & Padding</h2>
+<p>Lossy vs lossless compression algorithms and image padding techniques with trace tables.</p>
+<div class="topics">
+<span class="tag">RLC</span><span class="tag">Huffman</span><span class="tag">Arithmetic</span><span class="tag">LZW</span><span class="tag">Pixel</span><span class="tag">Zero Pad</span><span class="tag">Mirror</span><span class="tag">Replicate</span><span class="tag">Circular</span>
+</div>
+</a>
+<a href="section3_segmentation_detection.html" class="card">
+<div class="card-number">Section 3</div>
+<h2>Segmentation & Detection</h2>
+<p>Thresholding methods plus line, corner, point, and edge detection with masks.</p>
+<div class="topics">
+<span class="tag">Thresholding</span><span class="tag">Histogram</span><span class="tag">Double Seg</span><span class="tag">Line (H/V/±45)</span><span class="tag">Harris</span><span class="tag">Shi-Tomasi</span><span class="tag">ORB</span><span class="tag">Point</span><span class="tag">Sobel Edge</span>
+</div>
+</a>
+<a href="section4_classification_morphology.html" class="card">
+<div class="card-number">Section 4</div>
+<h2>Classification & Morphology</h2>
+<p>KNN, K-means clustering, and morphological operations with visual binary grid examples.</p>
+<div class="topics">
+<span class="tag">KNN</span><span class="tag">K-means</span><span class="tag">Dilation</span><span class="tag">Erosion</span><span class="tag">Opening</span><span class="tag">Closing</span>
+</div>
+</a>
+</div>
+<div class="footer">Image Processing Concepts Study Guide — All 4 Sections • 40+ Topics</div>
+</body>
+</html>

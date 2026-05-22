@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section 2: Compression &amp; Padding — IP Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    line-height: 1.75;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    margin-bottom: 2.5rem;
+    background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  header .label {
+    display: inline-block;
+    background: rgba(255,255,255,.12);
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-size: .75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: .75rem;
+    color: #e94560;
+    font-weight: 700;
+  }
+  header h1 { font-size: 2.4rem; font-weight: 800; color: #fff; }
+  header p { color: #b0b8d0; margin-top: .5rem; font-size: .95rem; }
+
+  /* ── Section dividers ── */
+  .section-divider {
+    text-align: center;
+    margin: 3rem 0 2rem;
+    position: relative;
+  }
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e94560, transparent);
+  }
+  .section-divider span {
+    position: relative;
+    background: #1a1a2e;
+    padding: 0 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e94560;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: #16213e;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 16px;
+    padding: 2rem 2rem 2.5rem;
+    margin-bottom: 2rem;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(0,0,0,.35);
+  }
+  .card-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #e94560, #533483);
+    color: #fff;
+    width: 36px; height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: .9rem;
+    margin-bottom: .75rem;
+  }
+  .card h2 { font-size: 1.45rem; font-weight: 700; color: #fff; margin-bottom: .25rem; }
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #e94560;
+    margin: 1.5rem 0 .5rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .card h3::before {
+    content: '';
+    width: 4px; height: 18px;
+    background: #e94560;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .card p, .card li { font-size: .92rem; color: #c5cad8; }
+  .card ul, .card ol { padding-left: 1.3rem; margin: .4rem 0 .6rem; }
+  .card li { margin-bottom: .3rem; }
+
+  /* ── Example / Step / Question boxes ── */
+  .box {
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    margin: .75rem 0 1rem;
+    font-size: .88rem;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .box-example {
+    background: rgba(15,52,96,.55);
+    border-left: 4px solid #0f3460;
+  }
+  .box-steps {
+    background: rgba(83,52,131,.2);
+    border-left: 4px solid #533483;
+  }
+  .box-question {
+    background: rgba(233,69,96,.12);
+    border-left: 4px solid #e94560;
+  }
+
+  code, .mono {
+    font-family: 'Courier New', Courier, monospace;
+    background: rgba(255,255,255,.07);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: .85rem;
+    color: #ffd460;
+  }
+  pre {
+    background: rgba(0,0,0,.3);
+    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: .5rem 0;
+    font-size: .82rem;
+    line-height: 1.6;
+    color: #b8c4db;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: .5rem 0;
+    font-size: .85rem;
+  }
+  th, td {
+    border: 1px solid rgba(255,255,255,.1);
+    padding: 6px 10px;
+    text-align: center;
+  }
+  th { background: rgba(233,69,96,.2); color: #fff; font-weight: 600; }
+
+  strong { color: #fff; }
+  em { color: #ffd460; font-style: normal; }
+
+  .grid-img {
+    display: inline-grid;
+    gap: 2px;
+    margin: .5rem .5rem .5rem 0;
+    font-family: 'Courier New', monospace;
+    font-size: .82rem;
+    font-weight: 600;
+  }
+  .grid-img span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,.07);
+    border-radius: 4px;
+    color: #ffd460;
+  }
+  .grid-img .pad { background: rgba(233,69,96,.18); color: #e94560; }
+
+  .arrow { color: #e94560; font-size: 1.4rem; margin: 0 .5rem; vertical-align: middle; }
+
+  @media (max-width: 640px) {
+    .card { padding: 1.4rem 1.2rem; }
+    header h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header>
+  <div class="label">Image Processing Study Guide</div>
+  <h1>Section 2: Compression &amp; Padding</h1>
+  <p>Lossy &amp; Lossless Compression Algorithms · Image Padding Techniques</p>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════
+     PART A — COMPRESSION
+     ═══════════════════════════════════════════════════════ -->
+<div class="section-divider"><span>Compression</span></div>
+
+<!-- ──────────── 1. Compression Concepts ──────────── -->
+<div class="card">
+  <div class="card-number">1</div>
+  <h2>Compression Concepts — Lossy vs Lossless</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    <strong>Image compression</strong> reduces the number of bits needed to represent an image, saving storage and bandwidth.
+  </p>
+  <ul>
+    <li><strong>Lossless compression</strong> — The original image can be <em>perfectly reconstructed</em> from the compressed data. No information is lost. Examples: PNG, GIF, Run-Length Coding, Huffman, LZW.</li>
+    <li><strong>Lossy compression</strong> — Some information is <em>permanently discarded</em> to achieve much higher compression ratios. The reconstructed image is an approximation. Examples: JPEG, JPEG 2000.</li>
+  </ul>
+
+  <p style="margin-top:.6rem"><strong>Key metric — Compression Ratio:</strong></p>
+  <pre>CR = Original Size / Compressed Size</pre>
+  <p><strong>Relative Data Redundancy:</strong></p>
+  <pre>R = 1 − (1 / CR)</pre>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    Original image: <code>256 × 256</code> pixels, 8 bits/pixel → <strong>524,288 bits</strong>.<br>
+    After lossless compression the file is <strong>131,072 bits</strong>.<br><br>
+    <code>CR = 524,288 / 131,072 = <strong>4 : 1</strong></code><br>
+    <code>R  = 1 − 1/4 = <strong>0.75</strong>  →  75 % of the data was redundant</code><br><br>
+    After lossy compression the file is <strong>52,429 bits</strong>.<br>
+    <code>CR = 524,288 / 52,429 ≈ <strong>10 : 1</strong></code><br>
+    <code>R  = 1 − 1/10 = <strong>0.90</strong>  →  90 % redundancy removed (with quality loss)</code>
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li>Determine whether <em>exact reconstruction</em> is required (medical imaging → lossless) or <em>visual quality</em> is sufficient (web photos → lossy).</li>
+      <li>For <strong>lossless</strong>: identify spatial, coding, or inter-pixel redundancy and apply an entropy coder (Huffman, LZW, etc.).</li>
+      <li>For <strong>lossy</strong>: apply a transform (e.g., DCT), quantise coefficients (discard less-visible info), then entropy-code the result.</li>
+      <li>Compute CR and assess quality (e.g., PSNR) to balance size vs. fidelity.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    An image occupies <strong>1,048,576 bits</strong>. After lossless compression it is <strong>174,763 bits</strong>, and after lossy compression it is <strong>65,536 bits</strong>. Calculate the <em>compression ratio</em> and <em>relative data redundancy</em> for each. Which scheme removes more redundancy?
+  </div>
+</div>
+
+<!-- ──────────── 2. Run-Length Coding ──────────── -->
+<div class="card">
+  <div class="card-number">2</div>
+  <h2>Run-Length Coding (RLC)</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    RLC replaces consecutive runs of the <em>same value</em> with a <code>(value, count)</code> pair. It is <strong>lossless</strong> and works best when the image has large homogeneous regions (e.g., binary images, simple graphics).
+  </p>
+  <pre>Sequence  → (value, run-length) pairs</pre>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Row of pixels:</strong><br>
+    <code>5  5  5  5  3  3  7  7  7  7  7  7  1  1  1</code><br><br>
+    <strong>Encoded:</strong><br>
+    <code>(5,4) (3,2) (7,6) (1,3)</code><br><br>
+    Original: 15 values → Encoded: 8 values (4 pairs).<br>
+    <code>CR = 15 / 8 = <strong>1.875</strong></code>
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li>Choose a scan order: <em>row-by-row</em> (raster), column-by-column, or zigzag.</li>
+      <li>Start at the first pixel; record its value and initialise a counter = 1.</li>
+      <li>Move to the next pixel. If it equals the current value, increment counter. Otherwise, output the pair <code>(value, count)</code> and start a new run.</li>
+      <li>At the end of the scan, output the final pair.</li>
+      <li>To <strong>decode</strong>: read each pair and repeat the value <em>count</em> times.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Encode the following row using Run-Length Coding:<br>
+    <code>0 0 0 0 0 1 1 1 0 0 0 0 1 1 1 1 1 1 0 0</code><br>
+    What is the compression ratio (assume each original value and each number in a pair takes 1 unit)?
+  </div>
+</div>
+
+<!-- ──────────── 3. Huffman Coding ──────────── -->
+<div class="card">
+  <div class="card-number">3</div>
+  <h2>Huffman Coding</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    Huffman coding is a <strong>lossless, variable-length</strong> coding scheme. It assigns <em>shorter</em> codes to more frequent symbols and <em>longer</em> codes to less frequent ones, minimising the average code length. It is <strong>optimal</strong> among prefix-free codes.
+  </p>
+  <p><strong>Entropy (theoretical minimum avg. bits):</strong></p>
+  <pre>H = − Σ p(sᵢ) · log₂ p(sᵢ)</pre>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Symbol frequencies in a 4×4 image (16 pixels):</strong><br><br>
+    <table>
+      <tr><th>Symbol</th><th>Frequency</th><th>Probability</th><th>Huffman Code</th><th>Bits</th></tr>
+      <tr><td>A</td><td>7</td><td>7/16 = 0.4375</td><td>0</td><td>1</td></tr>
+      <tr><td>B</td><td>5</td><td>5/16 = 0.3125</td><td>10</td><td>2</td></tr>
+      <tr><td>C</td><td>3</td><td>3/16 = 0.1875</td><td>110</td><td>3</td></tr>
+      <tr><td>D</td><td>1</td><td>1/16 = 0.0625</td><td>111</td><td>3</td></tr>
+    </table>
+    <br>
+    <strong>Building the tree (bottom-up):</strong><br>
+    <pre>Step 1: Merge D(1) + C(3) → Node₁(4)
+Step 2: Merge Node₁(4) + B(5) → Node₂(9)
+Step 3: Merge A(7) + Node₂(9) → Root(16)</pre>
+    Assign left = 0, right = 1 at each node.<br><br>
+    <strong>Average code length:</strong><br>
+    <code>L = 0.4375×1 + 0.3125×2 + 0.1875×3 + 0.0625×3 = <strong>1.8125 bits/symbol</strong></code><br>
+    Fixed-length would need 2 bits/symbol → <code>CR = 2 / 1.8125 ≈ <strong>1.10</strong></code><br><br>
+    <strong>Entropy:</strong> H ≈ 1.749 bits/symbol — Huffman is close to optimal.
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li><strong>Scan</strong> the image and count the frequency of each pixel intensity (0–255).</li>
+      <li><strong>Sort</strong> symbols by frequency (ascending).</li>
+      <li><strong>Build the tree</strong>: repeatedly merge the two lowest-frequency nodes into a parent whose frequency is their sum.</li>
+      <li><strong>Assign codes</strong>: traverse from root; left branch = 0, right branch = 1. Record code for each leaf.</li>
+      <li><strong>Encode</strong>: replace each pixel value with its Huffman code.</li>
+      <li><strong>Store</strong> the code table alongside the bitstream for decoding.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Given pixel intensities with probabilities: <code>P(0)=0.4, P(1)=0.3, P(2)=0.2, P(3)=0.1</code>.<br>
+    (a) Build the Huffman tree and assign codes.<br>
+    (b) Calculate the average code length.<br>
+    (c) Calculate the entropy H. How close is Huffman to the entropy?
+  </div>
+</div>
+
+<!-- ──────────── 4. Arithmetic Coding ──────────── -->
+<div class="card">
+  <div class="card-number">4</div>
+  <h2>Arithmetic Coding</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    Arithmetic coding encodes an <em>entire message</em> as a single floating-point number in the interval <code>[0, 1)</code>. Unlike Huffman (which maps each symbol to a discrete code), it can achieve <strong>compression closer to the entropy</strong> limit because it doesn't require an integer number of bits per symbol.
+  </p>
+  <p><strong>Process:</strong> each symbol <em>narrows</em> the current interval proportionally to its probability.</p>
+  <pre>For each symbol sᵢ:
+  Low  = Low  + Range × CDF(sᵢ₋₁)
+  High = Low  + Range × CDF(sᵢ)
+  Range = High − Low</pre>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Symbols &amp; Probabilities:</strong> A = 0.5, B = 0.3, C = 0.2<br>
+    <strong>CDF intervals:</strong> A → [0.0, 0.5), B → [0.5, 0.8), C → [0.8, 1.0)<br><br>
+    <strong>Encode message: B A C</strong><br><br>
+    <table>
+      <tr><th>Step</th><th>Symbol</th><th>Low</th><th>High</th><th>Range</th></tr>
+      <tr><td>Init</td><td>—</td><td>0.000</td><td>1.000</td><td>1.000</td></tr>
+      <tr><td>1</td><td>B</td><td>0.000 + 1.0×0.5 = 0.500</td><td>0.000 + 1.0×0.8 = 0.800</td><td>0.300</td></tr>
+      <tr><td>2</td><td>A</td><td>0.500 + 0.3×0.0 = 0.500</td><td>0.500 + 0.3×0.5 = 0.650</td><td>0.150</td></tr>
+      <tr><td>3</td><td>C</td><td>0.500 + 0.15×0.8 = 0.620</td><td>0.500 + 0.15×1.0 = 0.650</td><td>0.030</td></tr>
+    </table>
+    <br>
+    Final interval: <strong>[0.620, 0.650)</strong>. Any number in this interval (e.g., <code>0.63</code>) uniquely represents "BAC".<br>
+    Bits needed ≈ −log₂(0.030) ≈ <strong>5.06 bits</strong> for 3 symbols (~1.69 bits/symbol).
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li><strong>Compute probabilities</strong> of each pixel value from the image histogram.</li>
+      <li><strong>Build CDF</strong>: cumulative probability intervals for each symbol.</li>
+      <li><strong>Initialise</strong> interval [Low, High) = [0, 1).</li>
+      <li><strong>For each pixel</strong> (in raster order): narrow the interval using the symbol's sub-interval.</li>
+      <li><strong>Output</strong> a number inside the final interval using the minimum number of bits.</li>
+      <li>To <strong>decode</strong>: start with the final number, repeatedly determine which sub-interval it falls in, output that symbol, and rescale.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Given symbols X (P=0.6), Y (P=0.25), Z (P=0.15), encode the message <code>X X Y Z</code> using arithmetic coding. Show the interval at each step. How many bits are needed?
+  </div>
+</div>
+
+<!-- ──────────── 5. LZW Compression ──────────── -->
+<div class="card">
+  <div class="card-number">5</div>
+  <h2>LZW Compression (Lempel–Ziv–Welch)</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    LZW is a <strong>dictionary-based, lossless</strong> compression method. It builds a dictionary <em>on the fly</em> by recognising repeated patterns (strings) in the data. Longer repeated sequences get a single dictionary code, leading to compression. Used in <strong>GIF</strong> and <strong>TIFF</strong> formats.
+  </p>
+  <pre>Algorithm sketch:
+  Initialise dictionary with all single symbols.
+  W = first symbol
+  For each next symbol K:
+      If W+K is in dictionary → W = W+K
+      Else → output code(W), add W+K to dictionary, W = K
+  Output code(W)</pre>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Input:</strong> <code>A B A B A B A</code><br>
+    <strong>Initial dictionary:</strong> A=0, B=1<br><br>
+    <table>
+      <tr><th>Step</th><th>W</th><th>K</th><th>W+K</th><th>In Dict?</th><th>Output</th><th>Add to Dict</th></tr>
+      <tr><td>1</td><td>A</td><td>B</td><td>AB</td><td>No</td><td>0 (A)</td><td>AB = 2</td></tr>
+      <tr><td>2</td><td>B</td><td>A</td><td>BA</td><td>No</td><td>1 (B)</td><td>BA = 3</td></tr>
+      <tr><td>3</td><td>A</td><td>B</td><td>AB</td><td>Yes</td><td>—</td><td>—</td></tr>
+      <tr><td>4</td><td>AB</td><td>A</td><td>ABA</td><td>No</td><td>2 (AB)</td><td>ABA = 4</td></tr>
+      <tr><td>5</td><td>A</td><td>B</td><td>AB</td><td>Yes</td><td>—</td><td>—</td></tr>
+      <tr><td>6</td><td>AB</td><td>A</td><td>ABA</td><td>Yes</td><td>—</td><td>—</td></tr>
+      <tr><td>7</td><td>ABA</td><td>—</td><td>—</td><td>—</td><td>4 (ABA)</td><td>—</td></tr>
+    </table>
+    <br>
+    <strong>Output codes:</strong> <code>0, 1, 2, 4</code> → 4 codes for 7 symbols.<br>
+    The dictionary grew: {A=0, B=1, AB=2, BA=3, ABA=4}.
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li><strong>Initialise</strong> the dictionary with all possible single pixel values (0–255 → codes 0–255).</li>
+      <li><strong>Read</strong> pixels in raster order. Build the current string W.</li>
+      <li>If <code>W + next_pixel</code> exists in the dictionary, extend W. Otherwise, output the code for W, add <code>W + next_pixel</code> as a new entry, and restart W with the next pixel.</li>
+      <li>Repeat until all pixels are processed; output the final W.</li>
+      <li>To <strong>decode</strong>: initialise the same starting dictionary, read codes, and rebuild entries identically.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Using LZW, compress the sequence: <code>1 2 1 2 1 2 1 2 1</code>.<br>
+    Start with dictionary {1=0, 2=1}. Show the full table of steps, outputs, and dictionary additions. What is the final sequence of codes?
+  </div>
+</div>
+
+<!-- ──────────── 6. Pixel Compression ──────────── -->
+<div class="card">
+  <div class="card-number">6</div>
+  <h2>Pixel Compression (Bit-Plane &amp; Predictive)</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    <strong>Pixel compression</strong> exploits <em>inter-pixel redundancy</em>: neighbouring pixels are often very similar. Techniques include:
+  </p>
+  <ul>
+    <li><strong>Bit-plane slicing:</strong> decompose an 8-bit image into 8 binary planes. Higher-order planes carry most information; lower-order planes are near-random and can be discarded or compressed heavily.</li>
+    <li><strong>Predictive coding (DPCM):</strong> instead of storing absolute pixel values, store the <em>difference</em> (error) between the actual pixel and a predicted value. Errors are small and compress well.</li>
+  </ul>
+  <pre>Prediction:  p̂(x,y) = f(neighbours)   (e.g., p̂ = pixel to the left)
+Error:       e(x,y) = p(x,y) − p̂(x,y)
+Encode:      store / compress e(x,y) values</pre>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Predictive coding (previous-pixel predictor):</strong><br>
+    <code>Original row:  120  122  121  125  130  128</code><br><br>
+    <table>
+      <tr><th>Pixel</th><th>Value</th><th>Predicted</th><th>Error (e)</th></tr>
+      <tr><td>1</td><td>120</td><td>— (store as-is)</td><td>120</td></tr>
+      <tr><td>2</td><td>122</td><td>120</td><td>+2</td></tr>
+      <tr><td>3</td><td>121</td><td>122</td><td>−1</td></tr>
+      <tr><td>4</td><td>125</td><td>121</td><td>+4</td></tr>
+      <tr><td>5</td><td>130</td><td>125</td><td>+5</td></tr>
+      <tr><td>6</td><td>128</td><td>130</td><td>−2</td></tr>
+    </table>
+    <br>
+    <strong>Error sequence:</strong> <code>120, +2, −1, +4, +5, −2</code><br>
+    The errors are much smaller than original values → fewer bits needed → better compression when fed to Huffman/RLC.
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li><strong>Choose a predictor</strong>: simple (left pixel), average of neighbours, or adaptive.</li>
+      <li><strong>Scan</strong> the image in raster order.</li>
+      <li>For each pixel, compute <code>e = actual − predicted</code>.</li>
+      <li>Store the first pixel directly; store all subsequent error values.</li>
+      <li><strong>Compress</strong> the error image with an entropy coder (Huffman, Arithmetic, etc.).</li>
+      <li>To <strong>reconstruct</strong>: start with the first pixel, then <code>pixel = predicted + e</code> for each subsequent position.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Given a row: <code>200, 198, 195, 197, 200, 202, 205</code>. Using a <em>previous-pixel predictor</em>, compute the error sequence. Then discuss: why is the error sequence easier to compress than the original?
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PART B — PADDING TECHNIQUES
+     ═══════════════════════════════════════════════════════ -->
+<div class="section-divider"><span>Padding Techniques</span></div>
+
+<p style="text-align:center;color:#8890a4;margin-bottom:1.5rem;font-size:.9rem;">
+  Padding adds extra pixels around an image so that convolution kernels can be applied at the borders without losing image size.
+</p>
+
+<!-- ──────────── 7. Mirror / Reflect Padding ──────────── -->
+<div class="card">
+  <div class="card-number">7</div>
+  <h2>Mirror / Reflect Padding</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    Pads the border by <em>reflecting</em> the image pixels across the edge, like a mirror. This avoids sharp discontinuities at the boundary, making it ideal for <strong>filtering</strong> and <strong>convolution</strong> operations.
+  </p>
+  <p>The reflected value does <em>not</em> repeat the edge pixel (in "reflect" mode) or <em>does</em> repeat it (in "mirror/symmetric" mode). Most implementations use symmetric reflection.</p>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Original 3×3 image:</strong>
+    <pre>1  2  3
+4  5  6
+7  8  9</pre>
+    <strong>Mirror-padded by 1 pixel (symmetric):</strong>
+    <pre>5  4  5  6  5
+2  1  2  3  2
+5  4  5  6  5
+8  7  8  9  8
+5  4  5  6  5</pre>
+    The edges are mirrored: left of <code>1 2 3</code> is <code>2 1</code> (reflected), etc.
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li>Determine the pad width <code>p</code> (usually <code>⌊kernel_size / 2⌋</code>).</li>
+      <li>Create a new image of size <code>(H + 2p) × (W + 2p)</code>.</li>
+      <li>Copy the original image into the centre.</li>
+      <li>For each border pixel at distance <code>d</code> from the edge, copy the pixel at distance <code>d</code> <em>inside</em> the edge (reflection).</li>
+      <li>Corners are reflections of the corner regions of the original.</li>
+      <li>Apply your filter / convolution on the padded image, then crop back to original size.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Given the 4×4 image below, apply mirror/reflect padding with <code>p = 1</code>. Write out the full 6×6 result.
+    <pre>10  20  30  40
+50  60  70  80
+90 100 110 120
+130 140 150 160</pre>
+  </div>
+</div>
+
+<!-- ──────────── 8. Zero Padding ──────────── -->
+<div class="card">
+  <div class="card-number">8</div>
+  <h2>Zero Padding</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    The simplest padding method: fill all border pixels with <strong>0</strong>. It preserves the spatial dimensions after convolution but introduces <em>dark artefacts</em> at the edges because the added zeros can affect filter outputs.
+  </p>
+  <p>Commonly used in <strong>CNNs</strong> and <strong>frequency-domain processing</strong> (to avoid circular convolution artefacts via DFT).</p>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Original 3×3 image:</strong>
+    <pre>1  2  3
+4  5  6
+7  8  9</pre>
+    <strong>Zero-padded by 1:</strong>
+    <pre>0  0  0  0  0
+0  1  2  3  0
+0  4  5  6  0
+0  7  8  9  0
+0  0  0  0  0</pre>
+    For a 3×3 kernel, the output after convolution will remain 3×3 (same as original).
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li>Determine pad width <code>p</code>.</li>
+      <li>Create a new array of size <code>(H + 2p) × (W + 2p)</code> initialised to <strong>0</strong>.</li>
+      <li>Place the original image in the centre: rows <code>[p .. H+p−1]</code>, cols <code>[p .. W+p−1]</code>.</li>
+      <li>Apply filter/convolution on padded image.</li>
+      <li>Crop the result back to <code>H × W</code>.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    You have a 5×5 image and a 5×5 convolution kernel. What value of <code>p</code> is needed so the output is still 5×5? Write the zero-padded image dimensions. How many zeros are added in total?
+  </div>
+</div>
+
+<!-- ──────────── 9. Replicate Padding ──────────── -->
+<div class="card">
+  <div class="card-number">9</div>
+  <h2>Replicate (Edge) Padding</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    Extends the image by <em>repeating</em> the nearest edge pixel outward. The top-left corner pixel fills the entire top-left padding region, the top row fills the top padding strip, etc. This is less harsh than zero padding and avoids the "dark border" artefact.
+  </p>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Original 3×3 image:</strong>
+    <pre>1  2  3
+4  5  6
+7  8  9</pre>
+    <strong>Replicate-padded by 1:</strong>
+    <pre>1  1  2  3  3
+1  1  2  3  3
+4  4  5  6  6
+7  7  8  9  9
+7  7  8  9  9</pre>
+    Edge values are simply copied outward. Corner values fill the diagonal padding cells.
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li>Determine pad width <code>p</code>.</li>
+      <li>Create a new <code>(H+2p) × (W+2p)</code> image.</li>
+      <li>Copy the original into the centre.</li>
+      <li><strong>Top strip:</strong> each column copies the first-row pixel of that column.</li>
+      <li><strong>Bottom strip:</strong> each column copies the last-row pixel.</li>
+      <li><strong>Left strip:</strong> each row copies the first-column pixel.</li>
+      <li><strong>Right strip:</strong> each row copies the last-column pixel.</li>
+      <li><strong>Corners:</strong> use the nearest corner pixel of the original image.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Apply replicate padding with <code>p = 2</code> to this 2×2 image:
+    <pre>10  20
+30  40</pre>
+    Write out the complete 6×6 padded result.
+  </div>
+</div>
+
+<!-- ──────────── 10. Periodic / Circular Padding ──────────── -->
+<div class="card">
+  <div class="card-number">10</div>
+  <h2>Periodic / Circular Padding</h2>
+
+  <h3>What It Does</h3>
+  <p>
+    Treats the image as if it tiles infinitely in all directions (like wrapping around a torus). Pixels that go off the right edge reappear from the left; pixels off the bottom reappear from the top. This padding is the <em>implicit assumption</em> of the <strong>Discrete Fourier Transform (DFT)</strong>, making it essential in frequency-domain filtering.
+  </p>
+  <pre>padded(x, y) = original( x mod H,  y mod W )</pre>
+
+  <h3>Worked Example</h3>
+  <div class="box box-example">
+    <strong>Original 3×3 image:</strong>
+    <pre>1  2  3
+4  5  6
+7  8  9</pre>
+    <strong>Periodic/Circular padded by 1:</strong>
+    <pre>9  7  8  9  7
+3  1  2  3  1
+6  4  5  6  4
+9  7  8  9  7
+3  1  2  3  1</pre>
+    The image wraps: the column to the right of <code>3 6 9</code> is <code>1 4 7</code> (start of the row).<br>
+    The row below <code>7 8 9</code> is <code>1 2 3</code> (top row).
+  </div>
+
+  <h3>How to Apply on an Image</h3>
+  <div class="box box-steps">
+    <ol>
+      <li>Determine pad width <code>p</code>.</li>
+      <li>Create a new <code>(H+2p) × (W+2p)</code> image.</li>
+      <li>Copy the original into the centre.</li>
+      <li>For each padding position <code>(i, j)</code>, compute source indices using modular arithmetic:
+        <code>src_row = (i − p) mod H</code>,  <code>src_col = (j − p) mod W</code>.</li>
+      <li>This is the default behaviour when you apply the <strong>DFT</strong> — the signal is assumed periodic.</li>
+    </ol>
+  </div>
+
+  <h3>Practice Question</h3>
+  <div class="box box-question">
+    Apply periodic/circular padding with <code>p = 2</code> to the following 3×3 image. Show the full 7×7 result.
+    <pre>A  B  C
+D  E  F
+G  H  I</pre>
+    <em>Hint:</em> the pattern tiles. Write out each row carefully using modular indexing.
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div style="text-align:center;padding:2rem 0 1rem;color:#555;font-size:.78rem;">
+  Section 2 — Compression &amp; Padding &nbsp;|&nbsp; Image Processing Study Guide &nbsp;|&nbsp; 2025
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

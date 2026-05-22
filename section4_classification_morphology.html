@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section 4: Classification, Clustering &amp; Morphology</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.7;
+    padding: 0 0 60px 0;
+  }
+
+  /* ── Header ── */
+  .hero {
+    background: linear-gradient(135deg, #0f3460 0%, #533483 50%, #e94560 100%);
+    padding: 60px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.05) 2px,
+      rgba(0,0,0,0.05) 4px
+    );
+  }
+  .hero h1 {
+    font-size: 2.6rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.35);
+  }
+  .hero .subtitle {
+    font-size: 1.1rem;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Section Divider ── */
+  .section-divider {
+    max-width: 1100px;
+    margin: 50px auto 30px;
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .section-divider .icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .section-divider h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .section-divider .line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.15), transparent);
+  }
+  .divider-classification .icon { background: linear-gradient(135deg,#0f3460,#533483); }
+  .divider-morphology .icon { background: linear-gradient(135deg,#e94560,#0f3460); }
+
+  /* ── Card ── */
+  .card {
+    background: #16213e;
+    border-radius: 18px;
+    max-width: 1100px;
+    margin: 28px auto;
+    padding: 40px 44px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+  }
+  .card:hover { transform: translateY(-3px); }
+
+  .card .topic-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #e94560, #533483);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 4px 14px;
+    border-radius: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    background: linear-gradient(90deg, #e94560, #f5a623);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .card .tagline {
+    font-size: 0.95rem;
+    color: #8892b0;
+    margin-bottom: 22px;
+    font-weight: 500;
+  }
+
+  h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 28px 0 12px;
+    color: #64ffda;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h4 .badge {
+    font-size: 0.7rem;
+    background: rgba(100,255,218,0.12);
+    padding: 2px 10px;
+    border-radius: 20px;
+    color: #64ffda;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  p, li { font-size: 0.95rem; color: #c5c5d6; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 6px; }
+  strong { color: #e0e0e0; font-weight: 600; }
+
+  /* ── Formula Box ── */
+  .formula-box {
+    background: #0d1b36;
+    border-left: 4px solid #e94560;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin: 16px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.97rem;
+    color: #f0c040;
+    overflow-x: auto;
+    line-height: 1.9;
+  }
+
+  /* ── Example / Step / Practice boxes ── */
+  .example-box, .steps-box, .practice-box {
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin: 16px 0;
+  }
+  .example-box {
+    background: rgba(83,52,131,0.13);
+    border: 1px solid rgba(83,52,131,0.35);
+  }
+  .steps-box {
+    background: rgba(15,52,96,0.25);
+    border: 1px solid rgba(15,52,96,0.45);
+  }
+  .practice-box {
+    background: rgba(233,69,96,0.08);
+    border: 1px solid rgba(233,69,96,0.3);
+  }
+  .practice-box h4 { color: #e94560; }
+
+  /* ── Grid Visuals ── */
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: flex-start;
+    margin: 14px 0;
+    justify-content: center;
+  }
+  .grid-wrapper { text-align: center; }
+  .grid-wrapper .grid-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #8892b0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .pixel-grid {
+    display: inline-grid;
+    gap: 2px;
+    background: #0a0f1f;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .pixel-grid .cell {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.82rem; font-weight: 700;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .cell-0 { background: #1b2540; color: #556; }
+  .cell-1 { background: #e94560; color: #fff; }
+  .cell-h { background: #f5a623; color: #000; }
+  .cell-g { background: #64ffda; color: #000; }
+
+  .arrow-between {
+    font-size: 2rem;
+    color: #64ffda;
+    display: flex;
+    align-items: center;
+    padding-top: 24px;
+  }
+
+  /* ── Data Table ── */
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.9rem;
+  }
+  table.data-table th {
+    background: #0d1b36;
+    color: #64ffda;
+    padding: 10px 14px;
+    text-align: center;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  table.data-table td {
+    padding: 9px 14px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #c5c5d6;
+  }
+  table.data-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .highlight { color: #f5a623; font-weight: 700; }
+  .highlight-green { color: #64ffda; font-weight: 700; }
+  .highlight-red { color: #e94560; font-weight: 700; }
+
+  .note {
+    font-size: 0.85rem;
+    color: #8892b0;
+    font-style: italic;
+    margin-top: 6px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 760px) {
+    .card { padding: 24px 18px; margin: 18px 12px; }
+    .hero h1 { font-size: 1.7rem; }
+    .pixel-grid .cell { width: 30px; height: 30px; font-size: 0.72rem; }
+    .grid-container { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<div class="hero">
+  <h1>Section 4: Classification, Clustering &amp; Morphology</h1>
+  <p class="subtitle">KNN · K-Means · Dilation · Erosion · Opening · Closing</p>
+</div>
+
+<!-- ═══════════════════ SECTION: CLASSIFICATION ═══════════════════ -->
+<div class="section-divider divider-classification">
+  <div class="icon">🧠</div>
+  <h2>Classification &amp; Clustering</h2>
+  <div class="line"></div>
+</div>
+
+<!-- ─────────────── TOPIC 1: KNN ─────────────── -->
+<div class="card">
+  <span class="topic-number">Topic 1</span>
+  <h3>K-Nearest Neighbors (KNN)</h3>
+  <p class="tagline">A lazy, instance-based classifier that votes by proximity</p>
+
+  <!-- What it does -->
+  <h4>📖 What It Does</h4>
+  <p>
+    KNN classifies an unknown sample by finding the <strong>K closest training points</strong> (neighbours) in feature space
+    and assigning the <strong>majority class</strong> among them. "Closest" is usually measured with
+    <strong>Euclidean distance</strong>.
+  </p>
+
+  <div class="formula-box">
+    <strong>Euclidean Distance (2-D):</strong><br>
+    d(P, Q) = √[ (x₂ − x₁)² + (y₂ − y₁)² ]<br><br>
+    <strong>General n-D form:</strong><br>
+    d(P, Q) = √[ Σᵢ (pᵢ − qᵢ)² ]<br><br>
+    <strong>Decision rule:</strong>  class(x) = mode{ class(neighbour₁), class(neighbour₂), …, class(neighbourₖ) }
+  </div>
+
+  <p>Key points:</p>
+  <ul>
+    <li><strong>K</strong> is a hyperparameter — small K → noisy; large K → over-smooth.</li>
+    <li>Choose <strong>odd K</strong> for binary problems to avoid ties.</li>
+    <li>Features should be <strong>normalised</strong> so no single dimension dominates distance.</li>
+    <li>It is <em>non-parametric</em> — no explicit training phase; all computation happens at prediction time.</li>
+  </ul>
+
+  <!-- Worked Example -->
+  <div class="example-box">
+    <h4>🔢 Worked Example <span class="badge">K = 3</span></h4>
+    <p>We have 6 training points with 2 features (Brightness, Texture) and want to classify the query <strong class="highlight">Q = (5, 5)</strong>.</p>
+
+    <table class="data-table">
+      <tr><th>Point</th><th>Brightness (x)</th><th>Texture (y)</th><th>Class</th></tr>
+      <tr><td>A</td><td>1</td><td>2</td><td class="highlight-green">Cat</td></tr>
+      <tr><td>B</td><td>2</td><td>3</td><td class="highlight-green">Cat</td></tr>
+      <tr><td>C</td><td>4</td><td>5</td><td class="highlight-red">Dog</td></tr>
+      <tr><td>D</td><td>6</td><td>7</td><td class="highlight-red">Dog</td></tr>
+      <tr><td>E</td><td>5</td><td>4</td><td class="highlight-red">Dog</td></tr>
+      <tr><td>F</td><td>3</td><td>6</td><td class="highlight-green">Cat</td></tr>
+    </table>
+
+    <p><strong>Step 1 — Compute distances from Q = (5, 5):</strong></p>
+    <table class="data-table">
+      <tr><th>Point</th><th>Calculation</th><th>Distance</th></tr>
+      <tr><td>A</td><td>√[(5−1)² + (5−2)²] = √(16+9)</td><td>5.00</td></tr>
+      <tr><td>B</td><td>√[(5−2)² + (5−3)²] = √(9+4)</td><td>3.61</td></tr>
+      <tr><td>C</td><td>√[(5−4)² + (5−5)²] = √(1+0)</td><td class="highlight">1.00</td></tr>
+      <tr><td>D</td><td>√[(5−6)² + (5−7)²] = √(1+4)</td><td class="highlight">2.24</td></tr>
+      <tr><td>E</td><td>√[(5−5)² + (5−4)²] = √(0+1)</td><td class="highlight">1.00</td></tr>
+      <tr><td>F</td><td>√[(5−3)² + (5−6)²] = √(4+1)</td><td>2.24</td></tr>
+    </table>
+
+    <p><strong>Step 2 — Pick K = 3 nearest:</strong> C (Dog, 1.00), E (Dog, 1.00), D (Dog, 2.24) <em>or</em> F (Cat, 2.24) — tie at 2.24. Taking D first by order.</p>
+    <p><strong>Step 3 — Vote:</strong> Dog = 3, Cat = 0  →  <strong class="highlight-red">Q is classified as Dog ✓</strong></p>
+  </div>
+
+  <!-- Steps on an image -->
+  <div class="steps-box">
+    <h4>🖼️ Applying KNN to Image Classification</h4>
+    <ol>
+      <li><strong>Feature Extraction:</strong> For each image, extract features — e.g., colour histogram, mean intensity, texture descriptors (GLCM), edge counts, or deep features from a CNN.</li>
+      <li><strong>Build a Training Set:</strong> Store feature vectors + labels for all labelled images.</li>
+      <li><strong>Choose K:</strong> Use cross-validation (e.g., K = 3, 5, 7) to find the best K.</li>
+      <li><strong>Normalise Features:</strong> Apply min-max or z-score normalisation so all features are on the same scale.</li>
+      <li><strong>For a New Image:</strong> Extract its feature vector, compute distance to every training sample, pick K closest, and take the majority vote.</li>
+      <li><strong>Output:</strong> The predicted class label for the image (e.g., "cat", "dog", "car").</li>
+    </ol>
+  </div>
+
+  <!-- Practice -->
+  <div class="practice-box">
+    <h4>✏️ Practice Question</h4>
+    <p>Given training data: A(2, 3, Cat), B(4, 4, Dog), C(6, 2, Dog), D(1, 5, Cat), E(5, 6, Dog), and query point <strong>Q = (3, 4)</strong>, classify Q using <strong>K = 3</strong>. Show all distance calculations and the final vote.</p>
+    <p class="note">Hint: Compute Euclidean distance to each point, sort, pick 3 nearest, count class labels.</p>
+  </div>
+</div>
+
+<!-- ─────────────── TOPIC 2: K-MEANS ─────────────── -->
+<div class="card">
+  <span class="topic-number">Topic 2</span>
+  <h3>K-Means Clustering</h3>
+  <p class="tagline">Unsupervised partitioning of data into K clusters by minimising within-cluster variance</p>
+
+  <h4>📖 What It Does</h4>
+  <p>
+    K-Means groups <strong>N data points</strong> into <strong>K clusters</strong> by iteratively:
+    (1) assigning each point to the <em>nearest centroid</em>, then
+    (2) recomputing centroids as the <em>mean</em> of assigned points.
+    It stops when assignments no longer change (convergence).
+  </p>
+
+  <div class="formula-box">
+    <strong>Objective (minimise):</strong><br>
+    J = Σₖ Σ_{x ∈ Cₖ} ‖x − μₖ‖²<br><br>
+    <strong>Algorithm:</strong><br>
+    1. Pick K initial centroids (randomly or K-means++).<br>
+    2. REPEAT:<br>
+    &nbsp;&nbsp;&nbsp;a. Assign each point to the nearest centroid.<br>
+    &nbsp;&nbsp;&nbsp;b. Recompute each centroid: μₖ = (1/|Cₖ|) Σ_{x ∈ Cₖ} x<br>
+    3. UNTIL centroids don't change.
+  </div>
+
+  <ul>
+    <li><strong>K</strong> must be chosen beforehand (use the <em>elbow method</em> or <em>silhouette score</em>).</li>
+    <li>Sensitive to initialisation — run multiple times and pick the best J.</li>
+    <li>Produces convex (spherical) clusters only.</li>
+  </ul>
+
+  <div class="example-box">
+    <h4>🔢 Worked Example <span class="badge">K = 2, 1-D data</span></h4>
+    <p>Data points: <strong class="highlight">{2, 3, 8, 9, 10}</strong>. Cluster into K = 2.</p>
+
+    <p><strong>Iteration 0 — Initialise centroids:</strong> μ₁ = 2, μ₂ = 8 (pick first and third points).</p>
+
+    <table class="data-table">
+      <tr><th>Point</th><th>|x − μ₁=2|</th><th>|x − μ₂=8|</th><th>Assign</th></tr>
+      <tr><td>2</td><td class="highlight">0</td><td>6</td><td>C₁</td></tr>
+      <tr><td>3</td><td class="highlight">1</td><td>5</td><td>C₁</td></tr>
+      <tr><td>8</td><td>6</td><td class="highlight">0</td><td>C₂</td></tr>
+      <tr><td>9</td><td>7</td><td class="highlight">1</td><td>C₂</td></tr>
+      <tr><td>10</td><td>8</td><td class="highlight">2</td><td>C₂</td></tr>
+    </table>
+
+    <p><strong>Iteration 1 — Recompute centroids:</strong></p>
+    <ul>
+      <li>μ₁ = (2 + 3) / 2 = <strong class="highlight-green">2.5</strong></li>
+      <li>μ₂ = (8 + 9 + 10) / 3 = <strong class="highlight-green">9.0</strong></li>
+    </ul>
+
+    <table class="data-table">
+      <tr><th>Point</th><th>|x − μ₁=2.5|</th><th>|x − μ₂=9|</th><th>Assign</th></tr>
+      <tr><td>2</td><td class="highlight">0.5</td><td>7</td><td>C₁</td></tr>
+      <tr><td>3</td><td class="highlight">0.5</td><td>6</td><td>C₁</td></tr>
+      <tr><td>8</td><td>5.5</td><td class="highlight">1</td><td>C₂</td></tr>
+      <tr><td>9</td><td>6.5</td><td class="highlight">0</td><td>C₂</td></tr>
+      <tr><td>10</td><td>7.5</td><td class="highlight">1</td><td>C₂</td></tr>
+    </table>
+
+    <p>Assignments unchanged → <strong class="highlight-green">Converged!</strong></p>
+    <p>Final clusters: <strong>C₁ = {2, 3}</strong>, <strong>C₂ = {8, 9, 10}</strong>.</p>
+  </div>
+
+  <div class="steps-box">
+    <h4>🖼️ Applying K-Means to an Image (Colour Quantisation)</h4>
+    <ol>
+      <li><strong>Reshape the image:</strong> Convert the H×W×3 image into a list of N pixels, each a 3-D vector (R, G, B).</li>
+      <li><strong>Choose K:</strong> Decide how many colours to keep (e.g., K = 8).</li>
+      <li><strong>Run K-Means:</strong> Cluster the N pixel vectors into K clusters. Each centroid becomes a representative colour.</li>
+      <li><strong>Replace pixels:</strong> Map every pixel to its cluster centroid colour.</li>
+      <li><strong>Reshape back:</strong> Fold the result back to H×W×3 to get the quantised image.</li>
+    </ol>
+    <p class="note">This reduces the colour palette to exactly K colours — useful for compression or segmentation.</p>
+  </div>
+
+  <div class="practice-box">
+    <h4>✏️ Practice Question</h4>
+    <p>Given 1-D data points <strong>{1, 2, 6, 7, 8, 12}</strong> and initial centroids μ₁ = 1, μ₂ = 12, perform <strong>two full iterations</strong> of K-Means (K = 2). Show assignments and updated centroids after each iteration. Has the algorithm converged after iteration 2?</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION: MORPHOLOGY ═══════════════════ -->
+<div class="section-divider divider-morphology">
+  <div class="icon">⬡</div>
+  <h2>Morphological Operations</h2>
+  <div class="line"></div>
+</div>
+
+<div class="card" style="padding-bottom:20px;">
+  <p style="color:#8892b0;font-size:0.92rem;">
+    Morphological operations probe a binary (or grayscale) image with a small shape called a
+    <strong style="color:#f5a623;">structuring element (SE)</strong>. They are the building blocks
+    for noise removal, shape extraction, and boundary detection. Below, <strong>1 = foreground (white)</strong> and <strong>0 = background (black)</strong>.
+  </p>
+</div>
+
+<!-- ─────────────── TOPIC 3: DILATION ─────────────── -->
+<div class="card">
+  <span class="topic-number">Topic 3</span>
+  <h3>Dilation</h3>
+  <p class="tagline">Grows / expands foreground regions — fills small holes and gaps</p>
+
+  <h4>📖 What It Does</h4>
+  <p>
+    Dilation <strong>adds pixels</strong> to object boundaries. For each pixel position, place the structuring element's
+    origin on it. If <em>any</em> foreground pixel of the image overlaps with a "1" in the SE, the output pixel is set to <strong>1</strong>.
+  </p>
+
+  <div class="formula-box">
+    <strong>Set notation:</strong><br>
+    A ⊕ B = { z | (B̂)_z ∩ A ≠ ∅ }<br><br>
+    <strong>Rule:</strong> Output(x,y) = 1 if ANY pixel under SE is 1 in the input;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 0 otherwise.
+  </div>
+
+  <div class="example-box">
+    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 cross SE</span></h4>
+
+    <div class="grid-container">
+      <!-- Input -->
+      <div class="grid-wrapper">
+        <div class="grid-label">Input Image (5×5)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+
+      <!-- SE -->
+      <div class="grid-wrapper">
+        <div class="grid-label">SE (3×3 Cross)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(3, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-h">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-h">1</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+
+      <div class="arrow-between">→</div>
+
+      <!-- Output -->
+      <div class="grid-wrapper">
+        <div class="grid-label">Dilated Output</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+    </div>
+    <p class="note"><span style="color:#64ffda;">■ Green</span> = newly added foreground pixels. The cross-shaped object expanded outward in all 4 directions.</p>
+  </div>
+
+  <div class="steps-box">
+    <h4>🖼️ Step-by-Step on an Image</h4>
+    <ol>
+      <li><strong>Binarise</strong> the image (threshold to 0/1).</li>
+      <li><strong>Choose a structuring element</strong> — shape (cross, square, disk) and size (3×3, 5×5, etc.).</li>
+      <li><strong>Slide the SE</strong> across every pixel in the image (the SE's centre aligns with the current pixel).</li>
+      <li>At each position, check: does <em>any</em> "1" in the SE overlap a "1" in the image?</li>
+      <li>If <strong>yes</strong> → output pixel = 1. If <strong>no</strong> → output pixel = 0.</li>
+      <li>The result: objects appear <strong>larger</strong>; small gaps and holes get filled.</li>
+    </ol>
+  </div>
+
+  <div class="practice-box">
+    <h4>✏️ Practice Question</h4>
+    <p>Dilate the following 5×5 binary image using a <strong>3×3 square (all ones)</strong> structuring element. Draw the output grid.</p>
+    <div class="grid-container" style="justify-content:flex-start;">
+      <div class="grid-wrapper">
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 34px);">
+          <div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div>
+          <div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div>
+          <div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div>
+          <div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div>
+          <div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Hint: A single pixel dilated by a 3×3 all-ones SE produces a 3×3 block of 1s centred on it.</p>
+  </div>
+</div>
+
+<!-- ─────────────── TOPIC 4: EROSION ─────────────── -->
+<div class="card">
+  <span class="topic-number">Topic 4</span>
+  <h3>Erosion</h3>
+  <p class="tagline">Shrinks foreground regions — removes small noise and thin protrusions</p>
+
+  <h4>📖 What It Does</h4>
+  <p>
+    Erosion <strong>removes pixels</strong> from object boundaries. At each position, the output pixel is 1 only if
+    <em>all</em> "1" positions of the SE are covered by foreground in the image. Otherwise, it becomes 0.
+  </p>
+
+  <div class="formula-box">
+    <strong>Set notation:</strong><br>
+    A ⊖ B = { z | B_z ⊆ A }<br><br>
+    <strong>Rule:</strong> Output(x,y) = 1 if ALL SE "1" pixels match "1" in the input;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 0 otherwise.
+  </div>
+
+  <div class="example-box">
+    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 cross SE</span></h4>
+
+    <div class="grid-container">
+      <!-- Input -->
+      <div class="grid-wrapper">
+        <div class="grid-label">Input Image (5×5)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+
+      <!-- SE -->
+      <div class="grid-wrapper">
+        <div class="grid-label">SE (3×3 Cross)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(3, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-h">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-h">1</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+
+      <div class="arrow-between">→</div>
+
+      <!-- Output -->
+      <div class="grid-wrapper">
+        <div class="grid-label">Eroded Output</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">The large diamond (13 pixels) eroded down to a smaller cross (5 pixels). Boundary pixels were removed because the SE didn't fully fit.</p>
+  </div>
+
+  <div class="steps-box">
+    <h4>🖼️ Step-by-Step on an Image</h4>
+    <ol>
+      <li><strong>Binarise</strong> the image.</li>
+      <li><strong>Choose a structuring element</strong> (same shapes as dilation).</li>
+      <li><strong>Slide the SE</strong> across every pixel position.</li>
+      <li>At each position, check: do <em>all</em> "1" cells of the SE land on "1" in the image?</li>
+      <li>If <strong>yes</strong> → output = 1. If <strong>no</strong> → output = 0.</li>
+      <li>Result: objects become <strong>smaller</strong>; thin bridges and small noise specks vanish.</li>
+    </ol>
+  </div>
+
+  <div class="practice-box">
+    <h4>✏️ Practice Question</h4>
+    <p>Erode the following 5×5 image using a <strong>3×3 all-ones (square)</strong> SE. Show the result.</p>
+    <div class="grid-container" style="justify-content:flex-start;">
+      <div class="grid-wrapper">
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 34px);">
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Hint: Which pixels have the 3×3 SE fitting entirely inside the foreground?</p>
+  </div>
+</div>
+
+<!-- ─────────────── TOPIC 5: OPENING ─────────────── -->
+<div class="card">
+  <span class="topic-number">Topic 5</span>
+  <h3>Opening (Erosion → Dilation)</h3>
+  <p class="tagline">Removes small bright noise while preserving object shape and size</p>
+
+  <h4>📖 What It Does</h4>
+  <p>
+    <strong>Opening = Erosion followed by Dilation</strong> using the same SE. The erosion step removes small
+    noise blobs and thin protrusions; the subsequent dilation restores the remaining objects roughly to their
+    original size. The net effect: <strong>small foreground noise is removed</strong>, while larger shapes are preserved.
+  </p>
+
+  <div class="formula-box">
+    <strong>Formula:</strong><br>
+    A ∘ B = (A ⊖ B) ⊕ B<br><br>
+    <strong>Properties:</strong><br>
+    • Anti-extensive: A ∘ B ⊆ A (output ≤ input, never adds pixels beyond original)<br>
+    • Idempotent: (A ∘ B) ∘ B = A ∘ B (applying twice gives same result)
+  </div>
+
+  <div class="example-box">
+    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 cross SE</span></h4>
+    <p>The input has a main block with a small noise pixel at (0,4).</p>
+
+    <div class="grid-container">
+      <div class="grid-wrapper">
+        <div class="grid-label">Input</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+
+      <div class="arrow-between">→</div>
+
+      <div class="grid-wrapper">
+        <div class="grid-label">After Erosion</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+        <p class="note" style="margin-top:6px;">Noise pixel gone ✓</p>
+      </div>
+
+      <div class="arrow-between">→</div>
+
+      <div class="grid-wrapper">
+        <div class="grid-label">After Dilation (Final)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+        <p class="note" style="margin-top:6px;">Shape restored, noise removed ✓</p>
+      </div>
+    </div>
+
+    <p style="margin-top:14px;">Notice: the isolated noise pixel at (0,4) was destroyed by erosion and <strong>not recovered</strong> by dilation. The main 3×3 block was eroded then dilated back — roughly preserved (with cross-SE it takes a cross shape).</p>
+  </div>
+
+  <div class="steps-box">
+    <h4>🖼️ Step-by-Step on an Image</h4>
+    <ol>
+      <li><strong>Binarise</strong> the image.</li>
+      <li><strong>Choose a structuring element</strong> whose size is larger than the noise you want to remove.</li>
+      <li><strong>Apply erosion:</strong> Small blobs (smaller than the SE) disappear entirely.</li>
+      <li><strong>Apply dilation</strong> with the same SE: Surviving objects regrow to approximately their original size.</li>
+      <li><strong>Result:</strong> Clean image with small foreground noise removed, large shapes intact.</li>
+    </ol>
+    <p class="note">Use case: Remove salt noise (isolated white specks) from a binary image.</p>
+  </div>
+
+  <div class="practice-box">
+    <h4>✏️ Practice Question</h4>
+    <p>Given the 6×6 binary image below, perform <strong>Opening</strong> with a <strong>3×3 all-ones SE</strong>. Show both the intermediate eroded result and the final opened result.</p>
+    <div class="grid-container" style="justify-content:flex-start;">
+      <div class="grid-wrapper">
+        <div class="pixel-grid" style="grid-template-columns: repeat(6, 32px);">
+          <div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div>
+          <div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div>
+          <div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div>
+          <div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div>
+          <div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-1" style="width:32px;height:32px;font-size:0.7rem;">1</div>
+          <div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div><div class="cell cell-0" style="width:32px;height:32px;font-size:0.7rem;">0</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">The isolated 1 at (4,5) and the protruding 1 at (0,2) should both be removed by opening.</p>
+  </div>
+</div>
+
+<!-- ─────────────── TOPIC 6: CLOSING ─────────────── -->
+<div class="card">
+  <span class="topic-number">Topic 6</span>
+  <h3>Closing (Dilation → Erosion)</h3>
+  <p class="tagline">Fills small holes and gaps while preserving object shape and size</p>
+
+  <h4>📖 What It Does</h4>
+  <p>
+    <strong>Closing = Dilation followed by Erosion</strong> using the same SE. The dilation step fills small dark
+    holes and narrow gaps; the subsequent erosion shrinks the objects back to approximately their original size.
+    Net effect: <strong>small background holes inside foreground are filled</strong>.
+  </p>
+
+  <div class="formula-box">
+    <strong>Formula:</strong><br>
+    A • B = (A ⊕ B) ⊖ B<br><br>
+    <strong>Properties:</strong><br>
+    • Extensive: A ⊆ A • B (output ≥ input, never removes original foreground)<br>
+    • Idempotent: (A • B) • B = A • B<br>
+    • Closing is the <em>dual</em> of Opening: A • B = (Aᶜ ∘ B)ᶜ
+  </div>
+
+  <div class="example-box">
+    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 cross SE</span></h4>
+    <p>The input has a solid block with a small hole at centre (2,2).</p>
+
+    <div class="grid-container">
+      <div class="grid-wrapper">
+        <div class="grid-label">Input (hole at centre)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+      </div>
+
+      <div class="arrow-between">→</div>
+
+      <div class="grid-wrapper">
+        <div class="grid-label">After Dilation</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+        <p class="note" style="margin-top:6px;">Hole filled ✓ (but object grew)</p>
+      </div>
+
+      <div class="arrow-between">→</div>
+
+      <div class="grid-wrapper">
+        <div class="grid-label">After Erosion (Final)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+        </div>
+        <p class="note" style="margin-top:6px;">Size restored, hole filled ✓</p>
+      </div>
+    </div>
+
+    <p style="margin-top:14px;">The centre hole at (2,2) was filled by dilation. The erosion then shrunk the object back, but the filled hole <strong>stayed filled</strong>. The object is now a complete 3×3 block.</p>
+  </div>
+
+  <div class="steps-box">
+    <h4>🖼️ Step-by-Step on an Image</h4>
+    <ol>
+      <li><strong>Binarise</strong> the image.</li>
+      <li><strong>Choose a structuring element</strong> whose size matches the holes/gaps you want to fill.</li>
+      <li><strong>Apply dilation:</strong> Objects expand; small internal holes and narrow gaps get filled.</li>
+      <li><strong>Apply erosion</strong> with the same SE: Objects shrink back to roughly their original size.</li>
+      <li><strong>Result:</strong> Clean image with small background holes filled, object boundaries preserved.</li>
+    </ol>
+    <p class="note">Use case: Fill pepper noise (isolated black specks) inside objects, or close narrow breaks in contours.</p>
+  </div>
+
+  <div class="practice-box">
+    <h4>✏️ Practice Question</h4>
+    <p>Perform <strong>Closing</strong> on the following 5×5 image with a <strong>3×3 all-ones SE</strong>. Show the intermediate dilated result and the final closed output.</p>
+    <div class="grid-container" style="justify-content:flex-start;">
+      <div class="grid-wrapper">
+        <div class="pixel-grid" style="grid-template-columns: repeat(5, 34px);">
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-0" style="width:34px;height:34px;">0</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+          <div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div><div class="cell cell-1" style="width:34px;height:34px;">1</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Hint: The dilation will expand into the hole region. Will the subsequent erosion re-open any of it?</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SUMMARY TABLE ═══════════════════ -->
+<div class="card" style="padding:30px 44px;">
+  <h3 style="margin-bottom:18px;">⚡ Quick Reference: Opening vs. Closing</h3>
+  <table class="data-table">
+    <tr>
+      <th>Operation</th>
+      <th>Formula</th>
+      <th>Order</th>
+      <th>Removes</th>
+      <th>Preserves</th>
+      <th>Use Case</th>
+    </tr>
+    <tr>
+      <td><strong>Opening</strong></td>
+      <td>A ∘ B = (A ⊖ B) ⊕ B</td>
+      <td>Erosion → Dilation</td>
+      <td>Small bright (FG) noise</td>
+      <td>Large FG shapes</td>
+      <td>Salt noise removal</td>
+    </tr>
+    <tr>
+      <td><strong>Closing</strong></td>
+      <td>A • B = (A ⊕ B) ⊖ B</td>
+      <td>Dilation → Erosion</td>
+      <td>Small dark (BG) holes</td>
+      <td>Object boundaries</td>
+      <td>Pepper noise, gap filling</td>
+    </tr>
+  </table>
+  <p class="note" style="margin-top:12px;">
+    💡 <strong>Memory trick:</strong> Open<em>ing</em> = Ero<strong>s</strong>ion first → removes <strong>s</strong>mall foreground.
+    Clos<em>ing</em> = <strong>D</strong>ilation first → fills <strong>d</strong>ark holes.
+  </p>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center; padding:40px 20px 10px; color:#555; font-size:0.82rem;">
+  Section 4 — Image Processing Study Guide &nbsp;|&nbsp; Classification, Clustering &amp; Morphology
+</div>
+
+</body>
+</html>
