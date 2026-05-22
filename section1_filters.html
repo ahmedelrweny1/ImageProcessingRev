@@ -195,6 +195,7 @@
 </style>
 </head>
 <body>
+<nav style="padding: 15px 20px; background: #1a1a2e; border-bottom: 1px solid rgba(99,102,241,0.2);"><a href="index.html" style="color: #818cf8; text-decoration: none; font-weight: 600; font-size: 1rem;">&#8592; Back to Home</a></nav>
 <div class="container">
 
 <!-- ════════════════  HERO  ════════════════ -->
@@ -726,10 +727,10 @@
   <span class="section-label label-desc">Description &amp; Formula</span>
   <p>A <strong>High Pass Filter</strong> allows high-frequency components (edges, details) to pass while attenuating low-frequency (smooth) areas. It is the complement of a low-pass filter: <code>HPF = Original − LPF</code>. The kernel sums to <strong>0</strong> (or near 0).</p>
   <div class="formula">
-    Basic 3×3 HPF kernel: &nbsp; | -1  -1  -1 |<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  &nbsp;8  -1 |<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  -1  -1 |<br>
-    (Sum of all weights = 0)
+    Basic 3×3 HPF kernel: &nbsp; | &nbsp;0  -1  &nbsp;0 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  &nbsp;5  -1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;0  -1  &nbsp;0 |<br>
+    (Used for sharpening/high-boost)
   </div>
 
   <span class="section-label label-example">Worked Example (3 × 3)</span>
@@ -738,7 +739,8 @@
     <tr><td>50</td><td class="highlight">200</td><td>50</td></tr>
     <tr><td>50</td><td>50</td><td>50</td></tr>
   </table>
-  <p>Result = (−1)×50×8 + 8×200 = −400 + 1600 = <span class="calc">1200</span></p>
+  <p>Result = 0×50 + (−1)×50 + 0×50 + (−1)×50 + 5×200 + (−1)×50 + 0×50 + (−1)×50 + 0×50</p>
+  <p>= -50 - 50 + 1000 - 50 - 50 = <span class="calc">800</span></p>
   <p>Clamped to [0, 255] → <span class="calc">255</span></p>
   <p class="note">The bright centre pixel stands out — the filter detects it as an edge/detail.</p>
 
@@ -755,9 +757,9 @@
   <span class="section-label label-question">Practice Question</span>
   <div class="question-box">
     <p class="q-label">Q:</p>
-    <p>Apply the HPF kernel [-1,-1,-1; -1,8,-1; -1,-1,-1] to a region where all pixels = 100. What is the output? What does this tell you?</p>
+    <p>Apply the HPF kernel [0,-1,0; -1,5,-1; 0,-1,0] to a region where all pixels = 100. What is the output? What does this tell you?</p>
     <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
-    <div class="spoiler-answer"><strong>Answer:</strong> Output = (-1)×100×8 + 8×100 = -800+800 = <strong>0</strong>. In a flat (uniform) region, the HPF gives 0 — it only responds to changes (edges), confirming it filters out low frequencies.</div>
+    <div class="spoiler-answer"><strong>Answer:</strong> Output = (-1)×100×4 + 5×100 = -400+500 = <strong>100</strong>. In a flat region, it retains the original intensity while sharpening edges where intensity changes.</div>
   </div>
 </div>
 
@@ -816,12 +818,12 @@
   <p class="aka">2nd-order derivative filter</p>
 
   <span class="section-label label-desc">Description &amp; Formula</span>
-  <p>The <strong>Laplacian</strong> is a 2nd-order derivative operator that detects regions of rapid intensity change. It is <em>isotropic</em> (rotation-invariant). Since it highlights edges in all directions, it is used for <strong>sharpening</strong>: <code>sharpened = original − Laplacian</code> (when centre is negative) or <code>original + Laplacian</code> (when centre is positive).</p>
+  <p>The <strong>Laplacian</strong> is a 2nd-order derivative operator that detects regions of rapid intensity change. It is <em>isotropic</em> (rotation-invariant). When using a negative centre, we handle negative result values with the formula: <code>value = min(255, |result|)</code>.</p>
   <div class="formula">
     ∇²f = ∂²f/∂x² + ∂²f/∂y²<br><br>
-    Kernel (4-connected): &nbsp; | &nbsp;0  -1  &nbsp;0 |&nbsp;&nbsp;&nbsp;&nbsp; Kernel (8-connected): &nbsp; | -1  -1  -1 |<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  &nbsp;4  -1 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  &nbsp;8  -1 |<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;0  -1  &nbsp;0 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| -1  -1  -1 |
+    Kernel (4-connected): &nbsp; | &nbsp;0  &nbsp;1  &nbsp;0 |&nbsp;&nbsp;&nbsp;&nbsp; Kernel (8-connected): &nbsp; | &nbsp;1  &nbsp;1  &nbsp;1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;1  -4  &nbsp;1 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;1  -8  &nbsp;1 |<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;0  &nbsp;1  &nbsp;0 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;1  &nbsp;1  &nbsp;1 |
   </div>
 
   <span class="section-label label-example">Worked Example (3 × 3, 4-connected kernel)</span>
@@ -830,27 +832,25 @@
     <tr><td>10</td><td class="highlight">80</td><td>10</td></tr>
     <tr><td>10</td><td>10</td><td>10</td></tr>
   </table>
-  <p>Laplacian = 0×10 + (−1)×10 + 0×10 + (−1)×10 + 4×80 + (−1)×10 + 0×10 + (−1)×10 + 0×10</p>
-  <p>= 0 − 10 + 0 − 10 + 320 − 10 + 0 − 10 + 0 = <span class="calc">280</span></p>
-  <p><strong>Sharpened</strong> = 80 − (−1)×… Actually with positive centre: sharp = original + Laplacian output isn't used directly. Instead:</p>
-  <p>Since the centre coefficient is positive (+4), sharpened = original + Laplacian: not needed here. The Laplacian output 280 indicates a strong edge at the centre pixel.</p>
+  <p>Laplacian = 0×10 + 1×10 + 0×10 + 1×10 + (-4)×80 + 1×10 + 0×10 + 1×10 + 0×10</p>
+  <p>= 0 + 10 + 0 + 10 - 320 + 10 + 0 + 10 + 0 = <span class="calc">-280</span></p>
+  <p><strong>Result handling:</strong> value = min(255, |-280|) = min(255, 280) = <span class="calc">255</span></p>
 
   <span class="section-label label-apply">How to Apply on an Image</span>
   <ol class="steps">
     <li>Choose the Laplacian kernel (4-connected or 8-connected).</li>
     <li>Pad image borders.</li>
     <li>Convolve the kernel with the image to get the Laplacian result L.</li>
-    <li>For sharpening: if the centre coefficient is <strong>positive</strong>, compute <code>sharp = original + L</code>; if <strong>negative</strong>, compute <code>sharp = original − L</code>.</li>
-    <li>Clamp results to [0, 255].</li>
-    <li>The Laplacian alone gives edges; combined with the original gives a sharpened image.</li>
+    <li>Handle negative values: <code>value = min(255, |L|)</code></li>
+    <li>The Laplacian alone gives edges; it can be added/subtracted to the original to get a sharpened image.</li>
   </ol>
 
   <span class="section-label label-question">Practice Question</span>
   <div class="question-box">
     <p class="q-label">Q:</p>
-    <p>Apply the 4-connected Laplacian [0,-1,0; -1,4,-1; 0,-1,0] to a flat region where all pixels = 50. What is the Laplacian output? What does this mean?</p>
+    <p>Apply the 4-connected Laplacian [0,1,0; 1,-4,1; 0,1,0] to a flat region where all pixels = 50. What is the Laplacian output?</p>
     <button class="spoiler-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">Show Answer</button>
-    <div class="spoiler-answer"><strong>Answer:</strong> L = 0×50 + (-1)×50 + 0×50 + (-1)×50 + 4×50 + (-1)×50 + 0×50 + (-1)×50 + 0×50 = -50-50+200-50-50 = <strong>0</strong>. In a flat region the Laplacian is zero — it only responds to intensity changes, confirming it's a derivative operator.</div>
+    <div class="spoiler-answer"><strong>Answer:</strong> L = 0×50 + 1×50 + 0×50 + 1×50 + (-4)×50 + 1×50 + 0×50 + 1×50 + 0×50 = 50+50-200+50+50 = <strong>0</strong>. In a flat region the Laplacian is zero — it only responds to intensity changes.</div>
   </div>
 </div>
 
@@ -960,3 +960,4 @@
 </div><!-- /container -->
 </body>
 </html>
+
