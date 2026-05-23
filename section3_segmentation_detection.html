@@ -290,7 +290,7 @@ p(k) = h(k) / N    (normalized histogram, where N = total pixels)</div>
     <p>The valley between peaks at 1 and 3 is at intensity 2 → a good threshold would be T = 2.</p>
   </div>
 
-  <h3>🖼️ The Professor's Method: Iterative Center of Mass</h3>
+  <h3>🖼️ Iterative Center of Mass</h3>
   <p>To mathematically find the perfect valley between peaks, we calculate the Center of Mass (Mean Intensity) for the dark and light regions using this formula:</p>
   <div class="formula">μ = &Sigma; (p<sub>i</sub> &times; count(p<sub>i</sub>)) / &Sigma; count(p<sub>i</sub>)</div>
   <p>This calculates the "average brightness" of an entire region by giving more weight to intensities that have higher pixel counts. Here is the full academic loop:</p>
