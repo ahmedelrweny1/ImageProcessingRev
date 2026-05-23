@@ -530,9 +530,11 @@ Step 3: Merge A(7) + Node₂(9) → Root(16)</pre>
   <div class="box box-example">
     <strong>Original 1D array:</strong>
     <pre>[ 1  2  3 ]</pre>
+    <strong>Mirror-padded by 1 pixel:</strong>
+    <pre>[ 1  1  2  3  3 ]</pre>
     <strong>Mirror-padded by 2 pixels (we take the edges also):</strong>
     <pre>[ 2  1  1  2  3  3  2 ]</pre>
-    The edges are mirrored and duplicated: left of <code>1 2 3</code> we pad with <code>2 1</code>, and right of it we pad with <code>3 2</code>.
+    The edges are mirrored and duplicated. For 1 pixel, left of <code>1 2 3</code> we pad with <code>1</code>, and right with <code>3</code>. For 2 pixels, left we pad with <code>2 1</code>, and right with <code>3 2</code>.
   </div>
 
   <h3>How to Apply on an Image</h3>
