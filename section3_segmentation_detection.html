@@ -219,9 +219,9 @@
   <h2>Thresholding</h2>
 
   <h3>📖 What It Does</h3>
-  <p>Thresholding converts a grayscale image into a binary image by comparing every pixel intensity to a chosen threshold <strong>T</strong>. Pixels above (or equal to) T become white (foreground), and those below become black (background).</p>
-  <div class="formula">g(x, y) = 255   if f(x, y) &ge; T
-g(x, y) = 0     if f(x, y) &lt; T</div>
+  <p>Thresholding converts a grayscale image into a binary image by comparing every pixel intensity to a chosen threshold <strong>T</strong>. Pixels greater than T become white (foreground), and those less than or equal to T become black (background).</p>
+  <div class="formula">g(x, y) = 255   if f(x, y) &gt; T
+g(x, y) = 0     if f(x, y) &le; T</div>
 
   <h3>🔢 Worked Numerical Example</h3>
   <div class="example">
@@ -290,13 +290,16 @@ p(k) = h(k) / N    (normalized histogram, where N = total pixels)</div>
     <p>The valley between peaks at 1 and 3 is at intensity 2 → a good threshold would be T = 2.</p>
   </div>
 
-  <h3>🖼️ Step-by-Step on an Image</h3>
+  <h3>🖼️ The Professor's Method: Iterative Center of Mass</h3>
+  <p>To mathematically find the perfect valley between peaks, we calculate the Center of Mass (Mean Intensity) for the dark and light regions using this formula:</p>
+  <div class="formula">μ = &Sigma; (p<sub>i</sub> &times; count(p<sub>i</sub>)) / &Sigma; count(p<sub>i</sub>)</div>
+  <p>This calculates the "average brightness" of an entire region by giving more weight to intensities that have higher pixel counts. Here is the full academic loop:</p>
   <div class="steps"><ol>
-    <li>Load the grayscale image.</li>
-    <li>Initialize an array of 256 zeros (bins for intensities 0–255).</li>
-    <li>Scan every pixel; increment bin[ pixel_value ].</li>
-    <li>Plot the histogram (intensity on x-axis, frequency on y-axis).</li>
-    <li>Identify peaks and valleys. Choose the valley as a segmentation threshold.</li>
+    <li><strong>Initial Guess:</strong> Pick an initial threshold T<sub>0</sub> (usually 127, the literal halfway point of a 0-255 image, or the average brightness of the whole image).</li>
+    <li><strong>The Split:</strong> Separate all pixels into Group 1 (Background: values &le; T) and Group 2 (Foreground: values &gt; T).</li>
+    <li><strong>Find Centers:</strong> Calculate the mean of Group 1 (μ<sub>1</sub>) and Group 2 (μ<sub>2</sub>) using the formula above.</li>
+    <li><strong>Find Midpoint:</strong> Calculate the new threshold: <code>T<sub>new</sub> = (μ<sub>1</sub> + μ<sub>2</sub>) / 2</code>.</li>
+    <li><strong>The Loop:</strong> Check if <code>T<sub>new</sub> == T</code>. If yes: You have found the perfect threshold! Stop. If no: Set <code>T = T<sub>new</sub></code> and go back to Step 2.</li>
   </ol></div>
 
   <div class="practice">
@@ -316,25 +319,25 @@ p(k) = h(k) / N    (normalized histogram, where N = total pixels)</div>
   <h2>Double Segmentation (Two-Threshold / Band Segmentation)</h2>
 
   <h3>📖 What It Does</h3>
-  <p>Instead of a single threshold, <strong>two thresholds T<sub>low</sub> and T<sub>high</sub></strong> are used to isolate pixels whose intensities fall <em>between</em> the two thresholds. This creates three classes: background, region of interest, and another background/foreground region.</p>
-  <div class="formula">g(x, y) = 255   if T_low &le; f(x, y) &le; T_high
-g(x, y) = 0     otherwise</div>
+  <p>Double segmentation is used when one threshold creates only two regions but the image has <strong>3</strong> meaningful areas.</p>
+  <div class="formula">region 0 (Background): pixels &lt; T<sub>1</sub>
+region 1 (Mid): T<sub>1</sub> &le; pixels &lt; T<sub>2</sub>
+region 2 (Bright): pixels &ge; T<sub>2</sub></div>
 
   <h3>🔢 Worked Numerical Example</h3>
   <div class="example">
-    <div class="example-title">4×4 image, T<sub>low</sub> = 80, T<sub>high</sub> = 180</div>
+    <div class="example-title">3×3 image, T<sub>1</sub> = 50, T<sub>2</sub> = 150</div>
     <table class="mask-table">
-      <tr><td>50</td><td>100</td><td>200</td><td>90</td></tr>
-      <tr><td>150</td><td>30</td><td>180</td><td>85</td></tr>
-      <tr><td>190</td><td>120</td><td>75</td><td>160</td></tr>
-      <tr><td>60</td><td>140</td><td>210</td><td>80</td></tr>
+      <tr><td>30</td><td>80</td><td>160</td></tr>
+      <tr><td>45</td><td>120</td><td>140</td></tr>
+      <tr><td>200</td><td>55</td><td>40</td></tr>
     </table>
-    <p style="margin-top:10px">Output (255 if 80 ≤ value ≤ 180, else 0):</p>
+    <p style="margin-top:10px">Region 0: 0 &rarr; 49 | Region 1: 50 &rarr; 149 | Region 2: 150 &rarr; ...</p>
+    <p style="margin-top:10px">Output matrix (region assignments):</p>
     <table class="mask-table">
-      <tr><td>0</td><td>255</td><td>0</td><td>255</td></tr>
-      <tr><td>255</td><td>0</td><td>255</td><td>255</td></tr>
-      <tr><td>0</td><td>255</td><td>0</td><td>255</td></tr>
-      <tr><td>0</td><td>255</td><td>0</td><td>255</td></tr>
+      <tr><td>0</td><td>1</td><td>2</td></tr>
+      <tr><td>0</td><td>1</td><td>1</td></tr>
+      <tr><td>2</td><td>1</td><td>0</td></tr>
     </table>
   </div>
 
@@ -566,12 +569,14 @@ If |R| > T → line detected at that pixel.</div>
   <h2>Corner Detection — Harris</h2>
 
   <h3>📖 What It Does</h3>
-  <p>The Harris corner detector finds points where the image intensity changes significantly in <strong>all directions</strong>. It uses the <em>structure tensor</em> (second-moment matrix) of image gradients.</p>
-  <div class="formula">Structure Tensor M = Σ w(x,y) [ I_x²    I_x·I_y ]
-                                    [ I_x·I_y  I_y²   ]
+  <p>The Harris corner detector finds points where the image intensity changes significantly in <strong>all directions</strong>.</p>
+  <div class="formula">Let A = I<sub>x</sub>²,   B = I<sub>y</sub>²,   C = I<sub>x</sub>·I<sub>y</sub>
 
-Corner Response: R = det(M) − k · (trace(M))²
-  where det(M) = λ₁·λ₂,  trace(M) = λ₁ + λ₂,  k ≈ 0.04–0.06
+Det = A·B - C²
+Trace = A + B
+
+Corner Response: R = Det - k · (Trace)²
+  where k ≈ 0.04–0.06
 
 R &gt; 0 → Corner,   R ≈ 0 → Flat,   R &lt; 0 → Edge</div>
 
@@ -610,10 +615,12 @@ R &gt; 0 → Corner,   R ≈ 0 → Flat,   R &lt; 0 → Edge</div>
   <h2>Corner Detection — Shi-Tomasi</h2>
 
   <h3>📖 What It Does</h3>
-  <p>Shi-Tomasi is a modification of Harris that uses the <strong>minimum eigenvalue</strong> of the structure tensor M as the corner response. The intuition: a corner exists only if <em>both</em> eigenvalues are large. Using the minimum ensures we check the weaker direction.</p>
-  <div class="formula">R = min(λ₁, λ₂)
+  <p>Shi-Tomasi is a modification of Harris that uses the <strong>minimum eigenvalue</strong> as the corner response. The eigenvalues are calculated using the characteristic equation:</p>
+  <div class="formula">λ² - λ·Trace + Det = 0
 
-Corner if R > T  (both eigenvalues must be large)</div>
+R = min(λ₁, λ₂)
+
+Corner if R > T</div>
 
   <h3>🔢 Worked Numerical Example</h3>
   <div class="example">
@@ -654,26 +661,26 @@ Corner if R > T  (both eigenvalues must be large)</div>
   <h2>Corner Detection — ORB (Oriented FAST and Rotated BRIEF)</h2>
 
   <h3>📖 What It Does</h3>
-  <p>ORB combines <strong>FAST</strong> keypoint detection with <strong>BRIEF</strong> descriptor computation. FAST detects corners by examining a circle of 16 pixels around a candidate point. If <em>N</em> contiguous pixels on the circle are all brighter (or all darker) than the center by a threshold <em>t</em>, the point is a corner. ORB adds <strong>orientation</strong> (using intensity centroid) and <strong>rotation-invariant BRIEF</strong> descriptors.</p>
-  <div class="formula">FAST test (for pixel p with intensity I_p, threshold t):
-  A pixel x on the circle is "brighter" if I_x > I_p + t
-  A pixel x on the circle is "darker"   if I_x < I_p − t
-  Corner if ≥ N (typically 9–12) contiguous pixels are all brighter or all darker.
+  <p>ORB uses FAST to detect corners by classifying pixels in a circle around a center pixel into three categories based on the center pixel's intensity and a given threshold. Then it adds orientation and a rotated BRIEF descriptor.</p>
+  <div class="formula">Range = [intensity - threshold, intensity + threshold]
 
-ORB adds:
-  • Orientation via intensity centroid: θ = atan2(m₀₁, m₁₀)
-  • Steered BRIEF descriptors for matching</div>
+Category A (Darker): Value &le; (intensity - threshold)
+Category B (Similar): Inside the Range
+Category C (Brighter): Value &ge; (intensity + threshold)</div>
 
   <h3>🔢 Worked Numerical Example</h3>
   <div class="example">
-    <div class="example-title">FAST check with t = 20, N = 9, center pixel I<sub>p</sub> = 100</div>
-    <p>Circle pixels (16 values, simplified to first 12):</p>
-    <p>130, 135, 128, 140, 132, 125, 138, 131, 129, 80, 75, 90, …</p>
-    <p style="margin-top:8px">
-      Brighter threshold = 100 + 20 = 120<br>
-      Pixels above 120: 130✓, 135✓, 128✓, 140✓, 132✓, 125✓, 138✓, 131✓, 129✓ → <strong>9 contiguous brighter</strong><br>
-      9 ≥ N = 9 → <strong>Corner detected by FAST!</strong>
+    <div class="example-title">Center pixel intensity = 100, threshold = 20</div>
+    <p style="margin-top:10px">
+      <strong>Range</strong> = [100 - 20, 100 + 20] = [80, 120]<br>
+      A &le; 80 &nbsp; &mdash; &nbsp; B (between) &nbsp; &mdash; &nbsp; C &ge; 120
     </p>
+    <table class="mask-table" style="width:100%; font-size: 0.8rem;">
+      <tr><td>Position</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+      <tr><td>Value</td><td>75</td><td>70</td><td>60</td><td>60</td><td>60</td><td>70</td><td>85</td><td>95</td><td>110</td><td>130</td></tr>
+      <tr><td>Category</td><td>A</td><td>A</td><td>A</td><td>A</td><td>A</td><td>A</td><td>B</td><td>B</td><td>B</td><td>C</td></tr>
+    </table>
+    <p style="margin-top:10px">If enough contiguous pixels are in Category A or Category C, it is detected as a corner.</p>
   </div>
 
   <h3>🖼️ Step-by-Step on an Image</h3>
@@ -810,7 +817,8 @@ Approximate: G ≈ |G_x| + |G_y|</div>
     <li>Convolve the image with the G<sub>y</sub> kernel → vertical gradient.</li>
     <li>Compute gradient magnitude G = √(G<sub>x</sub>² + G<sub>y</sub>²) at each pixel.</li>
     <li>Optionally compute gradient direction θ = atan2(G<sub>y</sub>, G<sub>x</sub>).</li>
-    <li>Threshold G to obtain binary edge map.</li>
+    <li>Compute the average of the gradient magnitude: <code>T = Avg(G)</code>.</li>
+    <li>Apply thresholding on G(M) using T to obtain the binary edge map.</li>
   </ol></div>
 
   <div class="practice">
