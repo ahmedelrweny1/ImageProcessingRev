@@ -535,6 +535,18 @@ Step 3: Merge A(7) + Node₂(9) → Root(16)</pre>
     <strong>Mirror-padded by 2 pixels (we take the edges also):</strong>
     <pre>[ 2  1  1  2  3  3  2 ]</pre>
     The edges are mirrored and duplicated. For 1 pixel, left of <code>1 2 3</code> we pad with <code>1</code>, and right with <code>3</code>. For 2 pixels, left we pad with <code>2 1</code>, and right with <code>3 2</code>.
+    <br><br>
+    <strong>Original 3×3 image matrix:</strong>
+    <pre>1  2  3
+4  5  6
+7  8  9</pre>
+    <strong>Mirror-padded by 1 pixel (symmetric):</strong>
+    <pre>1  1  2  3  3
+1  1  2  3  3
+4  4  5  6  6
+7  7  8  9  9
+7  7  8  9  9</pre>
+    Notice how the first row <code>1 2 3</code> is padded horizontally to <code>1 1 2 3 3</code>, and then the entire new top row is duplicated upwards to pad vertically.
   </div>
 
   <h3>How to Apply on an Image</h3>
