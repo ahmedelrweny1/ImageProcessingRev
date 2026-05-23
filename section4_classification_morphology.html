@@ -672,12 +672,12 @@
   </div>
 
   <div class="example-box">
-    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 cross SE</span></h4>
-    <p>The input has a main block with a small noise pixel at (0,4).</p>
+    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 square SE</span></h4>
+    <p>The input has a main 3x3 block with a small noise pixel at (0,4).</p>
 
     <div class="grid-container">
       <div class="grid-wrapper">
-        <div class="grid-label">Input</div>
+        <div class="grid-label">Input Image</div>
         <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
           <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div>
           <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
@@ -687,15 +687,24 @@
         </div>
       </div>
 
+      <div class="grid-wrapper">
+        <div class="grid-label">SE (3×3 Square)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(3, 38px);">
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+        </div>
+      </div>
+
       <div class="arrow-between">→</div>
 
       <div class="grid-wrapper">
         <div class="grid-label">After Erosion</div>
         <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
           <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
           <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
-          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
-          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
           <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
         </div>
         <p class="note" style="margin-top:6px;">Noise pixel gone ✓</p>
@@ -706,17 +715,17 @@
       <div class="grid-wrapper">
         <div class="grid-label">After Dilation (Final)</div>
         <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
-          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
           <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
-          <div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
-          <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
-          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div>
+          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
         </div>
         <p class="note" style="margin-top:6px;">Shape restored, noise removed ✓</p>
       </div>
     </div>
 
-    <p style="margin-top:14px;">Notice: the isolated noise pixel at (0,4) was destroyed by erosion and <strong>not recovered</strong> by dilation. The main 3×3 block was eroded then dilated back — roughly preserved (with cross-SE it takes a cross shape).</p>
+    <p style="margin-top:14px;">Notice: the isolated noise pixel at (0,4) was destroyed by erosion and <strong>not recovered</strong> by dilation. The main 3×3 block was eroded to a single pixel, then dilated back to exactly its original shape using the square SE.</p>
   </div>
 
   <div class="steps-box">
@@ -773,12 +782,12 @@
   </div>
 
   <div class="example-box">
-    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 cross SE</span></h4>
-    <p>The input has a solid block with a small hole at centre (2,2).</p>
+    <h4>🔢 Worked Example <span class="badge">5×5 image, 3×3 square SE</span></h4>
+    <p>The input has a 3x3 ring with a small hole at the centre (2,2).</p>
 
     <div class="grid-container">
       <div class="grid-wrapper">
-        <div class="grid-label">Input (hole at centre)</div>
+        <div class="grid-label">Input Image</div>
         <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
           <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
           <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-0">0</div>
@@ -788,16 +797,25 @@
         </div>
       </div>
 
+      <div class="grid-wrapper">
+        <div class="grid-label">SE (3×3 Square)</div>
+        <div class="pixel-grid" style="grid-template-columns: repeat(3, 38px);">
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+          <div class="cell cell-h">1</div><div class="cell cell-h">1</div><div class="cell cell-h">1</div>
+        </div>
+      </div>
+
       <div class="arrow-between">→</div>
 
       <div class="grid-wrapper">
         <div class="grid-label">After Dilation</div>
         <div class="pixel-grid" style="grid-template-columns: repeat(5, 38px);">
-          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
-          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
           <div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
-          <div class="cell cell-0">0</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
-          <div class="cell cell-0">0</div><div class="cell cell-0">0</div><div class="cell cell-g">1</div><div class="cell cell-0">0</div><div class="cell cell-0">0</div>
+          <div class="cell cell-g">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-1">1</div><div class="cell cell-g">1</div>
+          <div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div><div class="cell cell-g">1</div>
         </div>
         <p class="note" style="margin-top:6px;">Hole filled ✓ (but object grew)</p>
       </div>
@@ -817,7 +835,7 @@
       </div>
     </div>
 
-    <p style="margin-top:14px;">The centre hole at (2,2) was filled by dilation. The erosion then shrunk the object back, but the filled hole <strong>stayed filled</strong>. The object is now a complete 3×3 block.</p>
+    <p style="margin-top:14px;">The centre hole at (2,2) was filled by dilation. The erosion then shrunk the solid 5x5 object back to 3x3, but the filled hole <strong>stayed filled</strong>.</p>
   </div>
 
   <div class="steps-box">
