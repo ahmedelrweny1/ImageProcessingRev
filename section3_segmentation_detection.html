@@ -268,27 +268,6 @@ g(x, y) = 0     if f(x, y) &le; T</div>
 
   <h3>📖 What It Does</h3>
   <p>A histogram counts the frequency of each intensity level (0–255) in a grayscale image. It reveals the distribution of pixel intensities and helps choose thresholds for segmentation. A <strong>bimodal</strong> histogram (two peaks) suggests a natural threshold exists in the valley between the peaks.</p>
-  <div class="formula">h(k) = number of pixels with intensity k,   k = 0, 1, …, 255
-p(k) = h(k) / N    (normalized histogram, where N = total pixels)</div>
-
-  <h3>🔢 Worked Numerical Example</h3>
-  <div class="example">
-    <div class="example-title">3×3 image — build its histogram</div>
-    <table class="mask-table">
-      <tr><td>0</td><td>1</td><td>2</td></tr>
-      <tr><td>1</td><td>3</td><td>1</td></tr>
-      <tr><td>2</td><td>3</td><td>3</td></tr>
-    </table>
-    <p style="margin-top:10px">Histogram counts (only non-zero levels):</p>
-    <ul>
-      <li>h(0) = 1</li>
-      <li>h(1) = 3</li>
-      <li>h(2) = 2</li>
-      <li>h(3) = 3</li>
-    </ul>
-    <p>Total pixels N = 9. Normalized: p(0) = 1/9, p(1) = 3/9 = 1/3, p(2) = 2/9, p(3) = 3/9 = 1/3.</p>
-    <p>The valley between peaks at 1 and 3 is at intensity 2 → a good threshold would be T = 2.</p>
-  </div>
 
   <h3>🖼️ Iterative Center of Mass</h3>
   <p>To mathematically find the perfect valley between peaks, we calculate the Center of Mass (Mean Intensity) for the dark and light regions using this formula:</p>
